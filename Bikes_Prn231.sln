@@ -5,13 +5,13 @@ VisualStudioVersion = 17.4.33103.184
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ClientService", "ClientService", "{8FC831FE-5BB9-4496-9516-251EB290F90B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientService.API", "ClientService.API\ClientService.API.csproj", "{50D62672-F9B2-4EC1-A3FA-0B73526B08C3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientService\ClientService.API", "ClientService\ClientService.API\ClientService.API.csproj", "{50D62672-F9B2-4EC1-A3FA-0B73526B08C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientService.Domain", "ClientService.Domain\ClientService.Domain.csproj", "{5235B58C-6803-4506-971D-CC804198B0DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientService\ClientService.Domain", "ClientService\ClientService.Domain\ClientService.Domain.csproj", "{5235B58C-6803-4506-971D-CC804198B0DE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientService.Application", "ClientService.Application\ClientService.Application.csproj", "{B96FD871-651D-4670-BFB4-01C90D04D4DD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientService\ClientService.Application", "ClientService\ClientService.Application\ClientService.Application.csproj", "{B96FD871-651D-4670-BFB4-01C90D04D4DD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientService.Infrastructure", "ClientService.Infrastructure\ClientService.Infrastructure.csproj", "{A568E4D4-0259-4D5B-A087-E08AC351BCCE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientService\ClientService.Infrastructure", "ClientService\ClientService.Infrastructure\ClientService.Infrastructure.csproj", "{A568E4D4-0259-4D5B-A087-E08AC351BCCE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

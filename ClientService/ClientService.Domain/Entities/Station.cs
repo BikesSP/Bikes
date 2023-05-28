@@ -8,5 +8,6 @@ namespace ClientService.Domain.Entities
 {
     public class Station
     {
+        public long Id { get; set; }
     }
 }
