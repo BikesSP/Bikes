@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClientService.Domain.Entities
+namespace ClientService.Application.Stations.Model
 {
-    public class Station
+    public class StationDetailResponse
     {
-        public long Id { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
     }
 }

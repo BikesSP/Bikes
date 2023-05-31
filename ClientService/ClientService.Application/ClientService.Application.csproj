@@ -25,7 +25,7 @@
 	<ItemGroup>
 	  <Folder Include="Auth\" />
 	  <Folder Include="Files\" />
-	  <Folder Include="Stations\" />
+	  <Folder Include="Stations\Query\" />
 	</ItemGroup>
 
 	<ItemGroup>
