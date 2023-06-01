@@ -3,6 +3,7 @@ using System;
 using ClientService.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ClientService.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230601050306_UpdateModelV8")]
+    partial class UpdateModelV8
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -208,7 +211,12 @@ namespace ClientService.Infrastructure.Migrations
                     b.Property<int>("ObjectStatus")
                         .HasColumnType("integer");
 
+                    b.Property<long?>("StationId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("StationId");
 
                     b.ToTable("Stations");
                 });
@@ -283,21 +291,6 @@ namespace ClientService.Infrastructure.Migrations
                     b.ToTable("Trips");
                 });
 
-            modelBuilder.Entity("StationStation", b =>
-                {
-                    b.Property<long>("NextStationId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("PreviousStationId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("NextStationId", "PreviousStationId");
-
-                    b.HasIndex("PreviousStationId");
-
-                    b.ToTable("StationStation");
-                });
-
             modelBuilder.Entity("AccountPost", b =>
                 {
                     b.HasOne("ClientService.Domain.Entities.Post", null)
@@ -338,6 +331,13 @@ namespace ClientService.Infrastructure.Migrations
                     b.Navigation("EndStation");
 
                     b.Navigation("StartStation");
+                });
+
+            modelBuilder.Entity("ClientService.Domain.Entities.Station", b =>
+                {
+                    b.HasOne("ClientService.Domain.Entities.Station", null)
+                        .WithMany("Stations")
+                        .HasForeignKey("StationId");
                 });
 
             modelBuilder.Entity("ClientService.Domain.Entities.Trip", b =>
@@ -383,24 +383,14 @@ namespace ClientService.Infrastructure.Migrations
                     b.Navigation("StartStation");
                 });
 
-            modelBuilder.Entity("StationStation", b =>
-                {
-                    b.HasOne("ClientService.Domain.Entities.Station", null)
-                        .WithMany()
-                        .HasForeignKey("NextStationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ClientService.Domain.Entities.Station", null)
-                        .WithMany()
-                        .HasForeignKey("PreviousStationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("ClientService.Domain.Entities.Post", b =>
                 {
                     b.Navigation("Trip");
+                });
+
+            modelBuilder.Entity("ClientService.Domain.Entities.Station", b =>
+                {
+                    b.Navigation("Stations");
                 });
 #pragma warning restore 612, 618
         }

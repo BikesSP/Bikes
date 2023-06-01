@@ -16,6 +16,7 @@ namespace ClientService.Domain.Entities
         public float Longitude { get; set; }
         public float Latitude { get; set; }
         public ObjectStatus ObjectStatus { get; set; }
-        public virtual List<Station> Stations { get; set; } = default!;
+        public virtual List<Station>? NextStation { get; set; }
+        public virtual List<Station>? PreviousStation { get; set; }
     }
 }

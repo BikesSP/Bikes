@@ -20,7 +20,7 @@ namespace ClientService.Domain.Entities
         public PostStatus Status { get; set; }
         [InverseProperty("Post")]
         public Trip? Trip { get; set; }
-        public virtual List<Account> Application { get; set; } = default!;
+        public virtual List<Account> Applier { get; set; } 
         public float FeedbackPoint { get; set; }
         public string FeedbackContent { get; set; }
         [ForeignKey("StartStationId")]

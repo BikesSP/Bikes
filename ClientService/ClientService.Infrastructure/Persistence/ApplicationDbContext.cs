@@ -23,8 +23,9 @@ namespace ClientService.Infrastructure.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Account>();
-
+            modelBuilder.Entity<Account>().HasMany(e => e.Application).WithMany(e => e.Applier);
+            modelBuilder.Entity<Station>().HasMany(e => e.NextStation).WithMany(e => e.PreviousStation);
+            modelBuilder.Entity<Post>().HasOne(e => e.Author);
         }
 
         public DbSet<Station> Stations => Set<Station>();
