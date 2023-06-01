@@ -21,6 +21,15 @@ namespace ClientService.Infrastructure.Persistence
             optionsBuilder.AddInterceptors(_saveChangesInterceptor);
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Account>();
+
+        }
+
         public DbSet<Station> Stations => Set<Station>();
+        public DbSet<Account> Accounts => Set<Account>();
+        public DbSet<Post> Posts => Set<Post>();
+        public DbSet<Trip> Trips => Set<Trip>();
     }
 }

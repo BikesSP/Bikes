@@ -3,6 +3,7 @@ using System;
 using ClientService.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ClientService.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230601044019_UpdateModelV6")]
+    partial class UpdateModelV6
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -149,6 +152,9 @@ namespace ClientService.Infrastructure.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<long?>("TripId")
+                        .HasColumnType("bigint");
+
                     b.Property<int>("TripRole")
                         .HasColumnType("integer");
 
@@ -165,6 +171,8 @@ namespace ClientService.Infrastructure.Migrations
                     b.HasIndex("EndStationId");
 
                     b.HasIndex("StartStationId");
+
+                    b.HasIndex("TripId");
 
                     b.ToTable("Posts");
                 });
@@ -211,7 +219,10 @@ namespace ClientService.Infrastructure.Migrations
             modelBuilder.Entity("ClientService.Domain.Entities.Trip", b =>
                 {
                     b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<DateTimeOffset>("CancelAt")
                         .HasColumnType("timestamp with time zone");
@@ -247,6 +258,9 @@ namespace ClientService.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("uuid");
 
+                    b.Property<long>("PostId")
+                        .HasColumnType("bigint");
+
                     b.Property<DateTimeOffset>("PostedStartTime")
                         .HasColumnType("timestamp with time zone");
 
@@ -272,6 +286,8 @@ namespace ClientService.Infrastructure.Migrations
                     b.HasIndex("GrabberId");
 
                     b.HasIndex("PassengerId");
+
+                    b.HasIndex("PostId");
 
                     b.HasIndex("StartStationId");
 
@@ -305,11 +321,17 @@ namespace ClientService.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ClientService.Domain.Entities.Trip", "Trip")
+                        .WithMany()
+                        .HasForeignKey("TripId");
+
                     b.Navigation("Author");
 
                     b.Navigation("EndStation");
 
                     b.Navigation("StartStation");
+
+                    b.Navigation("Trip");
                 });
 
             modelBuilder.Entity("ClientService.Domain.Entities.Station", b =>
@@ -333,15 +355,15 @@ namespace ClientService.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ClientService.Domain.Entities.Post", "Post")
-                        .WithOne("Trip")
-                        .HasForeignKey("ClientService.Domain.Entities.Trip", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("ClientService.Domain.Entities.Account", "Passenger")
                         .WithMany()
                         .HasForeignKey("PassengerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ClientService.Domain.Entities.Post", "Post")
+                        .WithMany()
+                        .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -365,8 +387,6 @@ namespace ClientService.Infrastructure.Migrations
             modelBuilder.Entity("ClientService.Domain.Entities.Post", b =>
                 {
                     b.Navigation("Application");
-
-                    b.Navigation("Trip");
                 });
 
             modelBuilder.Entity("ClientService.Domain.Entities.Station", b =>
