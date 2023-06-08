@@ -35,6 +35,13 @@ public static class ConfigureServices
         initializer.InitializeAsync().Wait();
         initializer.SeedAsync().Wait();
 
+        // Jwt service
+        services.AddScoped<IJwtService, JwtService>();
+
+        // Google authentication
+        services.AddScoped<IGoogleAuthService, GoogleAuthService>();
+
+
         // Authentication, Authorization
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>

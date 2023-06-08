@@ -1,5 +1,5 @@
-﻿using Google.Apis.Auth.OAuth2.Requests;
-using Google.Apis.Auth.OAuth2.Responses;
+﻿using ClientService.Application.Auth.Command;
+using ClientService.Application.Auth.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

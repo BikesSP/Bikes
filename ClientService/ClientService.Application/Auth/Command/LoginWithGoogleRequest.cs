@@ -1,12 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ClientService.Application.Auth.Model;
+using FluentValidation;
+using MediatR;
 
 namespace ClientService.Application.Auth.Command
 {
-    internal class LoginWithGoogleRequest
+    public class LoginWithGoogleRequestValidator : AbstractValidator<LoginWithGoogleRequest>
     {
+        public LoginWithGoogleRequestValidator()
+        {
+            RuleFor(model => model.IdToken)
+                .NotEmpty();
+        }
     }
+
+    public class LoginWithGoogleRequest : IRequest<TokenResponse>
+    {
+        public string IdToken { get; set; } = default!;
+    }
+
 }

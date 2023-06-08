@@ -10,6 +10,7 @@ namespace ClientService.Infrastructure.Repositories;
 public class UnitOfWork : IUnitOfWork
 {
     private IBaseRepository<Station>? _stationRepository;
+    private IBaseRepository<Account>? _accountRepository;
 
     private readonly ApplicationDbContext _dbContext;
     private bool _disposed;
@@ -21,6 +22,9 @@ public class UnitOfWork : IUnitOfWork
 
     public IBaseRepository<Station> StationRepository =>
         _stationRepository ??= new BaseRepository<Station>(_dbContext);
+
+    public IBaseRepository<Account> AccountRepository => 
+        _accountRepository ??= new BaseRepository<Account>(_dbContext);
 
     public int SaveChanges()
     {

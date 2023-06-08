@@ -12,6 +12,10 @@ namespace ClientService.Application.Common.Enums
         [Description("Validation Error")] ErrorValidation = 1,
         [Description("Common Error")] ErrorCommon = 2,
 
+        //Auth
+        [Description("Google Id Token is invalid")]AuthErrorInvalidGoogleIdToken = 21,
+        [Description("Refresh Token is invalid")] AuthErrorInvalidRefreshToken = 22,
+
         //Station
         [Description("Review not found")] StationErrorNotFound = 11,
     }
