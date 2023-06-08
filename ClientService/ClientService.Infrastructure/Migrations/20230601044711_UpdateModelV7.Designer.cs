@@ -3,6 +3,7 @@ using System;
 using ClientService.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ClientService.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230601044711_UpdateModelV7")]
+    partial class UpdateModelV7
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +24,6 @@ namespace ClientService.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("AccountPost", b =>
-                {
-                    b.Property<long>("ApplicationId")
-                        .HasColumnType("bigint");
-
-                    b.Property<Guid>("ApplierId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("ApplicationId", "ApplierId");
-
-                    b.HasIndex("ApplierId");
-
-                    b.ToTable("AccountPost");
-                });
 
             modelBuilder.Entity("ClientService.Domain.Entities.Account", b =>
                 {
@@ -95,6 +83,9 @@ namespace ClientService.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<long?>("PostId")
+                        .HasColumnType("bigint");
+
                     b.Property<int>("Role")
                         .HasColumnType("integer");
 
@@ -115,6 +106,8 @@ namespace ClientService.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PostId");
 
                     b.ToTable("Account");
                 });
@@ -208,7 +201,12 @@ namespace ClientService.Infrastructure.Migrations
                     b.Property<int>("ObjectStatus")
                         .HasColumnType("integer");
 
+                    b.Property<long?>("StationId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("StationId");
 
                     b.ToTable("Stations");
                 });
@@ -283,34 +281,11 @@ namespace ClientService.Infrastructure.Migrations
                     b.ToTable("Trips");
                 });
 
-            modelBuilder.Entity("StationStation", b =>
-                {
-                    b.Property<long>("NextStationId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("PreviousStationId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("NextStationId", "PreviousStationId");
-
-                    b.HasIndex("PreviousStationId");
-
-                    b.ToTable("StationStation");
-                });
-
-            modelBuilder.Entity("AccountPost", b =>
+            modelBuilder.Entity("ClientService.Domain.Entities.Account", b =>
                 {
                     b.HasOne("ClientService.Domain.Entities.Post", null)
-                        .WithMany()
-                        .HasForeignKey("ApplicationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ClientService.Domain.Entities.Account", null)
-                        .WithMany()
-                        .HasForeignKey("ApplierId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("Application")
+                        .HasForeignKey("PostId");
                 });
 
             modelBuilder.Entity("ClientService.Domain.Entities.Post", b =>
@@ -338,6 +313,13 @@ namespace ClientService.Infrastructure.Migrations
                     b.Navigation("EndStation");
 
                     b.Navigation("StartStation");
+                });
+
+            modelBuilder.Entity("ClientService.Domain.Entities.Station", b =>
+                {
+                    b.HasOne("ClientService.Domain.Entities.Station", null)
+                        .WithMany("Stations")
+                        .HasForeignKey("StationId");
                 });
 
             modelBuilder.Entity("ClientService.Domain.Entities.Trip", b =>
@@ -383,24 +365,16 @@ namespace ClientService.Infrastructure.Migrations
                     b.Navigation("StartStation");
                 });
 
-            modelBuilder.Entity("StationStation", b =>
-                {
-                    b.HasOne("ClientService.Domain.Entities.Station", null)
-                        .WithMany()
-                        .HasForeignKey("NextStationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ClientService.Domain.Entities.Station", null)
-                        .WithMany()
-                        .HasForeignKey("PreviousStationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("ClientService.Domain.Entities.Post", b =>
                 {
+                    b.Navigation("Application");
+
                     b.Navigation("Trip");
+                });
+
+            modelBuilder.Entity("ClientService.Domain.Entities.Station", b =>
+                {
+                    b.Navigation("Stations");
                 });
 #pragma warning restore 612, 618
         }
