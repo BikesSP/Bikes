@@ -47,6 +47,7 @@ namespace ClientService.Application.Auth.Handler
                     Email = payload.Email,
                     Name = payload.Name ?? payload.Email,
                     Role = Role.User,
+                    Phone = "",
                     AvartarUlr = payload.Picture
                 };
                 await _unitOfWork.AccountRepository.AddAsync(account);

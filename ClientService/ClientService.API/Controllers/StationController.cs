@@ -14,6 +14,7 @@ namespace ClientService.API.Controllers
     {
         [HttpPost]
         //[Authorize(Roles = "User")]
+        [Authorize]
         public async Task<ActionResult<StationDetailResponse>> Create(CreateStationRequest request)
         {
             return await Mediator.Send(request);
