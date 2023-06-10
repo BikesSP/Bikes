@@ -11,6 +11,7 @@ namespace ClientService.Application.Common.Enums
     {
         [Description("Validation Error")] ErrorValidation = 1,
         [Description("Common Error")] ErrorCommon = 2,
+        [Description("Unauthorized")] Unauthorized = 3,
 
         //Auth
         [Description("Google Id Token is invalid")]AuthErrorInvalidGoogleIdToken = 21,
