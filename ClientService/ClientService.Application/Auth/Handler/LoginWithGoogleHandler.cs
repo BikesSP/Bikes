@@ -51,7 +51,9 @@ namespace ClientService.Application.Auth.Handler
                         Name = payload.Name ?? payload.Email,
                         Role = Role.User,
                         Phone = "",
-                        AvartarUlr = payload.Picture
+                        AvartarUlr = payload.Picture,
+                        IsUpdated= false,
+                        SubjectId=payload.Subject
                     };
                     _unitOfWork.AccountRepository.Add(account);
                 }
