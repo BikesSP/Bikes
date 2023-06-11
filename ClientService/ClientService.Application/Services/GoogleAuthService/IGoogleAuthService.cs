@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClientService.Application.Common.Interfaces
+namespace ClientService.Application.Services.GoogleAuthService
 {
     public interface IGoogleAuthService
     {

@@ -1,7 +1,5 @@
-﻿using ClientService.Application.Common.Interfaces;
-using ClientService.Domain.Entities;
+﻿using ClientService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using ClientService.Application.Common.Interfaces;
 
 namespace ClientService.Infrastructure.Persistence
 {

@@ -1,4 +1,5 @@
 ﻿using ClientService.Application.Auth.Model;
+using ClientService.Domain.Wrappers;
 using FluentValidation;
 using MediatR;
 
@@ -13,7 +14,7 @@ namespace ClientService.Application.Auth.Command
         }
     }
 
-    public class LoginWithGoogleRequest : IRequest<TokenResponse>
+    public class LoginWithGoogleRequest : IRequest<Response<TokenResponse?>>
     {
         public string IdToken { get; set; } = default!;
     }

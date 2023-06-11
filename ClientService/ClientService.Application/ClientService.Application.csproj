@@ -23,12 +23,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Folder Include="Common\Interfaces\" />
 	  <Folder Include="Files\" />
 	  <Folder Include="Stations\Query\" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\ClientService.Domain\ClientService.Domain.csproj" />
+		<ProjectReference Include="..\ClientService.Infrastructure\ClientService.Infrastructure.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -1,6 +1,8 @@
 ﻿using System.Reflection;
 using ClientService.Application.Common.Behaviours;
 using ClientService.Application.Common.Mappings;
+using ClientService.Application.Services.GoogleAuthService;
+using ClientService.Application.Services.JwtService;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Configuration;
@@ -25,6 +27,12 @@ public static class ConfigureServices
             cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
             cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationErrorBehaviour<,>));
         });
+
+        // Jwt service
+        services.AddScoped<IJwtService, JwtService>();
+
+        // Google authentication
+        services.AddScoped<IGoogleAuthService, GoogleAuthService>();
 
         return services;
     }

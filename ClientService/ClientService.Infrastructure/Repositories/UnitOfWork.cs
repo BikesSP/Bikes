@@ -1,30 +1,50 @@
-﻿using ClientService.Application.Common.Interfaces;
+﻿
 using ClientService.Domain.Entities;
 using ClientService.Infrastructure.Persistence;
+using ClientService.Infrastructure.Repositories.AccountRepository;
+using ClientService.Infrastructure.Repositories.StationRepository;
 using Google;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Principal;
 
 namespace ClientService.Infrastructure.Repositories;
 
 public class UnitOfWork : IUnitOfWork
 {
-    private IBaseRepository<Station>? _stationRepository;
-    private IBaseRepository<Account>? _accountRepository;
 
     private readonly ApplicationDbContext _dbContext;
     private bool _disposed;
+
+    private IAccountRepository accountRepository;
+    private IStationRepository stationRepository;
+
+    public IAccountRepository AccountRepository
+    {
+        get
+        {
+            if (this.accountRepository == null)
+            {
+                this.accountRepository = new AccountRepository.AccountRepository(_dbContext);
+            }
+            return this.accountRepository;
+        }
+    }
+
+    public IStationRepository StationRepository
+    {
+        get
+        {
+            if (this.stationRepository == null)
+            {
+                this.stationRepository = new StationRepository.StationRepository(_dbContext);
+            }
+            return this.stationRepository;
+        }
+    }
 
     public UnitOfWork(ApplicationDbContext dbContext)
     {
         _dbContext = dbContext;
     }
-
-    public IBaseRepository<Station> StationRepository =>
-        _stationRepository ??= new BaseRepository<Station>(_dbContext);
-
-    public IBaseRepository<Account> AccountRepository => 
-        _accountRepository ??= new BaseRepository<Account>(_dbContext);
 
     public int SaveChanges()
     {

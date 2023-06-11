@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using ClientService.Application.Common.Interfaces;
 using ClientService.Application.Common.Models.Response;
 using ClientService.Application.Stations.Command;
 using ClientService.Application.Stations.Model;
 using ClientService.Domain.Entities;
+using ClientService.Infrastructure.Repositories;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using ServiceStack;
@@ -34,7 +34,7 @@ namespace ClientService.Application.Stations.Handler
         public async Task<StationDetailResponse> Handle(CreateStationRequest request, CancellationToken cancellationToken)
         {
             var station = _mapper.Map<Station>(request);
-            await _unitOfWork.StationRepository.AddAsync(station);
+            _unitOfWork.StationRepository.Add(station);
             await _unitOfWork.SaveChangesAsync();
             return _mapper.Map<StationDetailResponse>(station);
         }

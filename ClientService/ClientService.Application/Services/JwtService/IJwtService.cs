@@ -6,7 +6,7 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClientService.Application.Common.Interfaces
+namespace ClientService.Application.Services.JwtService
 {
     public interface IJwtService
     {

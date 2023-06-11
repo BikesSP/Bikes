@@ -1,5 +1,5 @@
-﻿using System.Linq.Dynamic.Core;
-using ClientService.Application.Common.Interfaces;
+﻿
+using ClientService.Infrastructure.Repositories;
 using Google;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
