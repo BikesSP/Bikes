@@ -1,9 +1,9 @@
-﻿using ClientService.Application.Common.Interfaces;
+﻿
 using Google.Apis.Auth;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace ClientService.Infrastructure.Services
+namespace ClientService.Application.Services.GoogleAuthService
 {
     public class GoogleAuthService : IGoogleAuthService
     {

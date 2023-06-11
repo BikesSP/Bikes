@@ -5,14 +5,14 @@ using System.Security.Principal;
 using System.Text;
 using ClientService.Application.Common.Enums;
 using ClientService.Application.Common.Exceptions;
-using ClientService.Application.Common.Interfaces;
 using ClientService.Domain.Entities;
 using ClientService.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using static Amazon.S3.Util.S3EventNotification;
 
-namespace ClientService.Infrastructure.Services;
+namespace ClientService.Application.Services.CurrentUserService;
 
 public class CurrentUserService : ICurrentUserService
 {
@@ -37,25 +37,21 @@ public class CurrentUserService : ICurrentUserService
             var claims = identity.Claims;
 
             var email = claims.FirstOrDefault(o => o.Type == ClaimTypes.NameIdentifier)?.Value ?? null;
-
             return email;
         }
     }
 
-    public async Task<Account> GetCurrentAccount(List<Expression<Func<Account, object>>> includes = null)
+    public Account GetCurrentAccount(Func<IQueryable<Account>, IQueryable<Account>>? includeFunc = null)
     {
-        var currentPrincipal = this.CurrentPrincipal;
+        var currentPrincipal = CurrentPrincipal;
         if (currentPrincipal == null)
         {
             throw new ApiException(ResponseCode.Unauthorized);
         }
-        var accountQuery =
-            await _unitOfWork.AccountRepository.GetAsync(
-                predicate: acc => acc.Email.ToLower().Equals(currentPrincipal.ToLower()),
-                includes: includes,
-                disableTracking: false);
-
-        var account = accountQuery.FirstOrDefault();
+        var account =
+            _unitOfWork.AccountRepository.FirstOrDefault(
+                expression: acc => acc.Email.ToLower().Equals(currentPrincipal.ToLower()),
+                includeFunc: includeFunc);
 
         return account ?? throw new ApiException(ResponseCode.Unauthorized);
     }

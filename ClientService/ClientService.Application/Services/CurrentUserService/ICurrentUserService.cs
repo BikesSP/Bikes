@@ -6,16 +6,16 @@ using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using static Amazon.S3.Util.S3EventNotification;
 
-namespace ClientService.Application.Common.Interfaces
+namespace ClientService.Application.Services.CurrentUserService
 {
     public interface ICurrentUserService
     {
         public string? CurrentPrincipal { get; }
 
         public ClaimsPrincipal GetCurrentPrincipalFromToken(string token);
-
-        Task<Account> GetCurrentAccount(List<Expression<Func<Account, object>>> includes = null);
+        Account GetCurrentAccount(Func<IQueryable<Account>, IQueryable<Account>>? includeFunc = null);
 
     }
 }

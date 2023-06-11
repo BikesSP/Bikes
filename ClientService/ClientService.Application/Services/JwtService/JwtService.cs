@@ -1,4 +1,4 @@
-﻿using ClientService.Application.Common.Interfaces;
+﻿
 using ClientService.Domain.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -10,7 +10,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClientService.Infrastructure.Services
+namespace ClientService.Application.Services.JwtService
 {
     public class JwtService : IJwtService
     {

@@ -7,10 +7,6 @@
   </PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\ClientService.Application\ClientService.Application.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.7.7" />
 		<PackageReference Include="AWSSDK.S3" Version="3.7.104.23" />
 		<PackageReference Include="Google.Protobuf" Version="3.23.2" />
@@ -33,6 +29,10 @@
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.4" />
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.Design" Version="1.1.0" />
 
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\ClientService.Domain\ClientService.Domain.csproj" />
 	</ItemGroup>
 
 </Project>

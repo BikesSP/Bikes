@@ -1,15 +1,13 @@
 ﻿using System.Text;
-using ClientService.Application.Common.Interfaces;
 using ClientService.Infrastructure.Persistence;
 using ClientService.Infrastructure.Repositories;
-using ClientService.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
-namespace ClientService.Infrastructure;
+namespace ClientService.Applcation;
 
 public static class ConfigureServices
 {
@@ -34,12 +32,6 @@ public static class ConfigureServices
 
         initializer.InitializeAsync().Wait();
         initializer.SeedAsync().Wait();
-
-        // Jwt service
-        services.AddScoped<IJwtService, JwtService>();
-
-        // Google authentication
-        services.AddScoped<IGoogleAuthService, GoogleAuthService>();
 
 
         // Authentication, Authorization

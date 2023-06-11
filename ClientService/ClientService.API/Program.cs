@@ -1,16 +1,27 @@
 using ClientService.API;
 using ClientService.API.Filters;
+using ClientService.Applcation;
 using ClientService.Application;
 using ClientService.Application.Common.Exceptions;
 using ClientService.Infrastructure;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using ServiceStack;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Configuration;
 using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Logging.AddConsole();
+
+var services = builder.Services;
+var configuration = builder.Configuration;
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+services.AddControllers();
+services.AddHttpContextAccessor();
+services.AddHttpClient();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(otp =>  
