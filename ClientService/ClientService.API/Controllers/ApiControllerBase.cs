@@ -11,18 +11,13 @@ namespace ClientService.API.Controllers
         /*private ISender? _mediator;
 
         protected ISender Mediator => _mediator ??= HttpContext.RequestServices.GetRequiredService<ISender>();*/
-        protected readonly IHttpContextAccessor httpContextAccessor;
-        protected readonly IWebHostEnvironment webHostEnvironment;
         protected readonly IMediator mediator;
         private readonly ILogger logger;
 
-        protected ApiControllerBase(IHttpContextAccessor httpContextAccessor,
-            IWebHostEnvironment webHostEnvironment,
+        protected ApiControllerBase(
             IMediator mediator,
             ILogger logger)
         {
-            this.httpContextAccessor = httpContextAccessor;
-            this.webHostEnvironment = webHostEnvironment;
             this.mediator = mediator;
             this.logger = logger;
         }

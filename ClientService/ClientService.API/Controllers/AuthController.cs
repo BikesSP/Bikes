@@ -15,7 +15,7 @@ namespace ClientService.API.Controllers
     [Route("/api/v1/auth")]
     public class AuthController : ApiControllerBase
     {
-        public AuthController(IHttpContextAccessor httpContextAccessor, IWebHostEnvironment webHostEnvironment, IMediator mediator, ILogger<AuthController> logger) : base(httpContextAccessor, webHostEnvironment, mediator, logger)
+        public AuthController(IMediator mediator, ILogger<AuthController> logger) : base(mediator, logger)
         {
         }
 

@@ -13,7 +13,7 @@ namespace ClientService.API.Controllers
 
     public class StationController : ApiControllerBase
     {
-        public StationController(IHttpContextAccessor httpContextAccessor, IWebHostEnvironment webHostEnvironment, IMediator mediator, ILogger<StationController> logger) : base(httpContextAccessor, webHostEnvironment, mediator, logger)
+        public StationController(IMediator mediator, ILogger<StationController> logger) : base(mediator, logger)
         {
         }
 

@@ -14,7 +14,7 @@ namespace ClientService.API.Controllers
     [Route("/api/v1/users")]
     public class UserController : ApiControllerBase
     {
-        public UserController(IHttpContextAccessor httpContextAccessor, IWebHostEnvironment webHostEnvironment, IMediator mediator, ILogger<UserController> logger) : base(httpContextAccessor, webHostEnvironment, mediator, logger)
+        public UserController(IMediator mediator, ILogger<UserController> logger) : base(mediator, logger)
         {
         }
 
