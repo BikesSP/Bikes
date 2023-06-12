@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClientService.Application.Auth.Model
+namespace ClientService.Application.User.Model
 {
     public class UserProfileResponse
     {

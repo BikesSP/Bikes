@@ -1,5 +1,6 @@
-﻿using ClientService.Application.Auth.Command;
-using ClientService.Application.Auth.Model;
+﻿using ClientService.Application.Auth.Model;
+using ClientService.Application.User.Command;
+using ClientService.Application.User.Model;
 using ClientService.Domain.Wrappers;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
