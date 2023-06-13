@@ -1,4 +1,5 @@
-﻿using ClientService.Application.User.Command;
+﻿using ClientService.Application.Services.CurrentUserService;
+using ClientService.Application.User.Command;
 using ClientService.Application.User.Model;
 using ClientService.Domain.Common;
 using ClientService.Domain.Entities;
@@ -20,65 +21,50 @@ namespace ClientService.Application.User.Handler
     {
         private readonly ILogger<UpdateVehicleHandler> _logger;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICurrentUserService _currentUserService;
 
         public UpdateVehicleHandler(
-            ILogger<UpdateVehicleHandler> logger, IUnitOfWork unitOfWork)
+            ILogger<UpdateVehicleHandler> logger, IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
+            _currentUserService = currentUserService;
         }
         public async Task<Response<VehicleResponse?>> Handle(UpdateVehicleRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                var vehicles = _unitOfWork.VehicleRepository.GetAll(
-                    expression: vehicle => vehicle.Account.Email == request.ownerEmail,
-                    includeFunc: x => x.Include(vehicle => vehicle.Account));
+                var vehicle = _currentUserService.GetCurrentAccount();
+                if (vehicle == null)
+                    return new Response<VehicleResponse?>(code: -1, message: "Internal server error");
 
-                if(vehicles.Count() == 0 && !request.isCreatedIfNull)
-                {
-                    return new Response<VehicleResponse?>(code: 80, message: "No vehicle to update");
-                }
+                if(vehicle.LicensePlate == null)
+                    return new Response<VehicleResponse?>(code: 0, data: null);
 
-                if(vehicles.Any(x => x.Status == VehicleStatus.Waiting))
-                {
-                    return new Response<VehicleResponse?>(code: 80, message: "One of your vehicle is waiting for confirm");
-                }
+                vehicle.Color = request.Color;
+                vehicle.LicensePlate = request.LicencePlate;
+                vehicle.Brand = request.Brand;
+                vehicle.ImageUrl = request.Image;
+                vehicle.Description= request.Description;
+                vehicle.Type = request.Type;
+                vehicle.Status = VehicleStatus.Waiting;
 
-                var user = _unitOfWork.AccountRepository.FirstOrDefault(expression: account => account.Email == request.ownerEmail);
-                if (user == null)
-                {
-                    throw new Exception("Internal server error");
-                }
-                Vehicle vehicle = new Vehicle()
-                {
-                    AccountId = user.Id,
-                    Color = request.Color,
-                    Brand = request.Brand,
-                    Description = request.Description,
-                    ImageUrl = request.Image,
-                    LicensePlate = request.Image,
-                    Type = request.Type,
-                    Status = VehicleStatus.Waiting
-                };
-                _unitOfWork.VehicleRepository.Add(vehicle);
-
+                _unitOfWork.AccountRepository.Update(vehicle);
                 var result = await _unitOfWork.SaveChangesAsync();
 
-                return result > 0 ? new Response<VehicleResponse?>(code: 0, data: new VehicleResponse()
-                {
-                    Id = vehicle.Id,
-                    Color = vehicle.Color,
-                    Brand = vehicle.Brand,
-                    Description = vehicle.Description,
-                    Image = vehicle.ImageUrl,
-                    LicencePlate = vehicle.LicensePlate,
-                    Type = vehicle.Type,
-                    Status = vehicle.Status
-                }) :
-                new Response<VehicleResponse?>(code: -1, message: "Internal server error")
-                ;
-
+                return result > 0 ? new Response<VehicleResponse?>(code: 0,
+                        data: new VehicleResponse()
+                        {
+                            Id = vehicle.Id,
+                            Color = vehicle.Color,
+                            Brand = vehicle.Brand,
+                            Description = vehicle.Description,
+                            Image = vehicle.ImageUrl,
+                            LicencePlate = vehicle.LicensePlate,
+                            Type = vehicle.Type,
+                            Status = vehicle.Status
+                        }
+                    ): new Response<VehicleResponse?>(code: -1, message: "Internal server error");
             }
             catch (Exception ex)
             {

@@ -9,7 +9,7 @@ namespace ClientService.Application.User.Model
 {
     public class VehicleResponse
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Brand { get; set; }
         public string LicencePlate { get; set; }
         public string Color { get; set; }

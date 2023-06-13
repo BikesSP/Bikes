@@ -25,14 +25,7 @@ namespace ClientService.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> getCurrentUserProfile()
         {
-            var email = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
-            Console.WriteLine(email);
-
-
-            return Ok(await mediator.Send(new GetCurrentUserRequest()
-            {
-                Email = email
-            }));
+            return Ok(await mediator.Send(new GetCurrentUserRequest()));
         }
 
         [HttpPost("me")]
@@ -41,9 +34,24 @@ namespace ClientService.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> LoginWithGoogle([FromBody] UpdateUserProfileRequest request)
         {
-            var email = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+            return Ok(await mediator.Send(request));
+        }
 
-            request.Email = email;
+        [HttpGet("/me/vehicle")]
+        [Authorize]
+        [ProducesResponseType(typeof(Response<VehicleResponse?>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetCurrentUserVehicle()
+        {
+            return Ok(await mediator.Send(new GetCurrentUserVehicleRequest()));
+        }
+
+        [HttpPut("/me/vehicle")]
+        [Authorize]
+        [ProducesResponseType(typeof(Response<VehicleResponse?>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> UpdateCurrentUserVehicle([FromBody] UpdateVehicleRequest request)
+        {
             return Ok(await mediator.Send(request));
         }
     }

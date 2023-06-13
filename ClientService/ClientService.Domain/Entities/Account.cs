@@ -24,6 +24,5 @@ namespace ClientService.Domain.Entities
         public bool IsUpdated { get; set; }
         public string SubjectId { get; set; }
         public virtual List<Post> Application { get; set; }
-        public virtual Vehicle[] Vehicles { get; set; }
     }
 }

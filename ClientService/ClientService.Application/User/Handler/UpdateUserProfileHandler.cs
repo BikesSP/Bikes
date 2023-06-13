@@ -1,4 +1,5 @@
 ﻿using Amazon.Runtime.Internal;
+using ClientService.Application.Services.CurrentUserService;
 using ClientService.Application.User.Command;
 using ClientService.Application.User.Model;
 using ClientService.Domain.Wrappers;
@@ -17,18 +18,20 @@ namespace ClientService.Application.User.Handler
     {
         private readonly ILogger<UpdateUserProfileHandler> _logger;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICurrentUserService _currentUserService;
 
         public UpdateUserProfileHandler(
-            ILogger<UpdateUserProfileHandler> logger, IUnitOfWork unitOfWork)
+            ILogger<UpdateUserProfileHandler> logger, IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
+            _currentUserService = currentUserService;
         }
         public async Task<Response<UserProfileResponse?>> Handle(UpdateUserProfileRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                var user = _unitOfWork.AccountRepository.FirstOrDefault(account => account.Email == request.Email);
+                var user = _currentUserService.GetCurrentAccount();
                 if (user == null)
                 {
                     return new Response<UserProfileResponse?>(code: -1, message: "Internal server error");

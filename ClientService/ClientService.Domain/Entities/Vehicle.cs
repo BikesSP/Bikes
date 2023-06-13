@@ -10,7 +10,6 @@ namespace ClientService.Domain.Entities
 {
     public class Vehicle : BaseAuditableEntity
     {
-        public int Id { get; set; }
         public string? Brand { get; set; }
         public string? LicensePlate { get; set; }
         public string? Color { get; set; }
@@ -18,7 +17,5 @@ namespace ClientService.Domain.Entities
         public string? Description { get; set; }
         public VehicleStatus Status { get; set; }
         public VehicleType Type { get; set; }
-        public Guid AccountId { get; set; }
-        public virtual Account Account { get; set; }
     }
 }

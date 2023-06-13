@@ -3,7 +3,6 @@ using ClientService.Domain.Entities;
 using ClientService.Infrastructure.Persistence;
 using ClientService.Infrastructure.Repositories.AccountRepository;
 using ClientService.Infrastructure.Repositories.StationRepository;
-using ClientService.Infrastructure.Repositories.VehicleRepository;
 using Google;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,7 +16,6 @@ public class UnitOfWork : IUnitOfWork
 
     private IAccountRepository accountRepository;
     private IStationRepository stationRepository;
-    private IVehicleRepository vehicleRepository;
 
     public IAccountRepository AccountRepository
     {
@@ -40,18 +38,6 @@ public class UnitOfWork : IUnitOfWork
                 this.stationRepository = new StationRepository.StationRepository(_dbContext);
             }
             return this.stationRepository;
-        }
-    }
-
-    public IVehicleRepository VehicleRepository
-    {
-        get
-        {
-            if (this.vehicleRepository == null)
-            {
-                this.vehicleRepository = new VehicleRepository.VehicleRepository(_dbContext);
-            }
-            return this.vehicleRepository;
         }
     }
 

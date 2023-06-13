@@ -1,4 +1,5 @@
-﻿using ClientService.Application.Services.GoogleAuthService;
+﻿using ClientService.Application.Services.CurrentUserService;
+using ClientService.Application.Services.GoogleAuthService;
 using ClientService.Application.Services.JwtService;
 using ClientService.Application.User.Command;
 using ClientService.Application.User.Model;
@@ -20,18 +21,20 @@ namespace ClientService.Application.User.Handler
 
         private readonly ILogger<GetCurrentUserHandler> _logger;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICurrentUserService _currentUserService;
 
         public GetCurrentUserHandler(
-            ILogger<GetCurrentUserHandler> logger, IUnitOfWork unitOfWork)
+            ILogger<GetCurrentUserHandler> logger, IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
+            _currentUserService = currentUserService;
         }
         public async Task<Response<UserProfileResponse?>> Handle(GetCurrentUserRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                var user = _unitOfWork.AccountRepository.FirstOrDefault(expression: account => account.Email == request.Email);
+                var user = _currentUserService.GetCurrentAccount();
                 if (user == null)
                 {
                     return new Response<UserProfileResponse?>(code: -1, message: "Internal server error");
