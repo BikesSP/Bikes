@@ -28,7 +28,7 @@ namespace ClientService.API.Controllers
             return Ok(await mediator.Send(new GetCurrentUserRequest()));
         }
 
-        [HttpPost("me")]
+        [HttpPut("me")]
         [Authorize]
         [ProducesResponseType(typeof(Response<TokenResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -37,7 +37,7 @@ namespace ClientService.API.Controllers
             return Ok(await mediator.Send(request));
         }
 
-        [HttpGet("/me/vehicle")]
+        [HttpGet("me/vehicle")]
         [Authorize]
         [ProducesResponseType(typeof(Response<VehicleResponse?>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -46,12 +46,21 @@ namespace ClientService.API.Controllers
             return Ok(await mediator.Send(new GetCurrentUserVehicleRequest()));
         }
 
-        [HttpPut("/me/vehicle")]
+        [HttpPut("me/vehicle")]
         [Authorize]
         [ProducesResponseType(typeof(Response<VehicleResponse?>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> UpdateCurrentUserVehicle([FromBody] UpdateVehicleRequest request)
         {
+            return Ok(await mediator.Send(request));
+        }
+
+        [HttpPut("me/vehicle/{id}/status")]
+        [ProducesResponseType(typeof(Response<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> UpdateVehicleStatus(string id, [FromBody] UpdateVehicleStatusRequest request)
+        {
+            request.Id = id;
             return Ok(await mediator.Send(request));
         }
     }

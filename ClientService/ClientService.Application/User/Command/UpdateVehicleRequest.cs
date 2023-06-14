@@ -31,6 +31,6 @@ namespace ClientService.Application.User.Command
         public string Color { get; set; }
         public string Image { get; set; }
         public string Description { get; set; }
-        public VehicleType Type { get; set; }
+        public string Type { get; set; }
     }
 }

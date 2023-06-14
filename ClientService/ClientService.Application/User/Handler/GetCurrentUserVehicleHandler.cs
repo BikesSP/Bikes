@@ -33,7 +33,7 @@ namespace ClientService.Application.User.Handler
               
                 
                 if(currentUser.LicensePlate == null) 
-                    return new Response<VehicleResponse?>(code: 0,
+                    return new Response<VehicleResponse?>(code: 61,
                         data: null
                     );
 

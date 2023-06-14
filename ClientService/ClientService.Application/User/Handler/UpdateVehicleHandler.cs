@@ -38,15 +38,12 @@ namespace ClientService.Application.User.Handler
                 if (vehicle == null)
                     return new Response<VehicleResponse?>(code: -1, message: "Internal server error");
 
-                if(vehicle.LicensePlate == null)
-                    return new Response<VehicleResponse?>(code: 0, data: null);
-
                 vehicle.Color = request.Color;
                 vehicle.LicensePlate = request.LicencePlate;
                 vehicle.Brand = request.Brand;
                 vehicle.ImageUrl = request.Image;
                 vehicle.Description= request.Description;
-                vehicle.Type = request.Type;
+                vehicle.Type = request.Type == "BIKE" ? VehicleType.Bike : VehicleType.Car;
                 vehicle.Status = VehicleStatus.Waiting;
 
                 _unitOfWork.AccountRepository.Update(vehicle);
