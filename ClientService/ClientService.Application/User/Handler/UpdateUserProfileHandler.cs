@@ -1,4 +1,6 @@
 ﻿using Amazon.Runtime.Internal;
+using ClientService.Application.Common.Enums;
+using ClientService.Application.Common.Extensions;
 using ClientService.Application.Services.CurrentUserService;
 using ClientService.Application.User.Command;
 using ClientService.Application.User.Model;
@@ -34,7 +36,7 @@ namespace ClientService.Application.User.Handler
                 var user = _currentUserService.GetCurrentAccount();
                 if (user == null)
                 {
-                    return new Response<UserProfileResponse?>(code: -1, message: "Internal server error");
+                    return new Response<UserProfileResponse?>(code: (int)ResponseCode.Failed, message: ResponseCode.Failed.GetDescription());
                 }
 
                 user.AvartarUlr = request.Avatar;
@@ -60,7 +62,7 @@ namespace ClientService.Application.User.Handler
             }
             catch (Exception ex)
             {
-                return new Response<UserProfileResponse?>(code: -1, message: "Internal server error");
+                return new Response<UserProfileResponse?>(code: (int)ResponseCode.Failed, message: ResponseCode.Failed.GetDescription());
             }
             finally
             {

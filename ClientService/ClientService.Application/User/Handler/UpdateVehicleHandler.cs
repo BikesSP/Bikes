@@ -1,4 +1,6 @@
-﻿using ClientService.Application.Services.CurrentUserService;
+﻿using ClientService.Application.Common.Enums;
+using ClientService.Application.Common.Extensions;
+using ClientService.Application.Services.CurrentUserService;
 using ClientService.Application.User.Command;
 using ClientService.Application.User.Model;
 using ClientService.Domain.Common;
@@ -36,7 +38,7 @@ namespace ClientService.Application.User.Handler
             {
                 var vehicle = _currentUserService.GetCurrentAccount();
                 if (vehicle == null)
-                    return new Response<VehicleResponse?>(code: -1, message: "Internal server error");
+                    return new Response<VehicleResponse?>(code: (int)ResponseCode.Failed, message: ResponseCode.Failed.GetDescription());
 
                 vehicle.Color = request.Color;
                 vehicle.LicensePlate = request.LicencePlate;
@@ -61,11 +63,11 @@ namespace ClientService.Application.User.Handler
                             Type = vehicle.Type,
                             Status = vehicle.Status
                         }
-                    ): new Response<VehicleResponse?>(code: -1, message: "Internal server error");
+                    ): new Response<VehicleResponse?>(code: (int)ResponseCode.Failed, message: ResponseCode.Failed.GetDescription());
             }
             catch (Exception ex)
             {
-                return new Response<VehicleResponse?>(code: -1, message: "Internal server error");
+                return new Response<VehicleResponse?>(code: (int)ResponseCode.Failed, message: ResponseCode.Failed.GetDescription());
             }
             finally
             {

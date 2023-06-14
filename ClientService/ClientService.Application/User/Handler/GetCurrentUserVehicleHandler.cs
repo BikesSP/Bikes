@@ -1,4 +1,6 @@
-﻿using ClientService.Application.Services.CurrentUserService;
+﻿using ClientService.Application.Common.Enums;
+using ClientService.Application.Common.Extensions;
+using ClientService.Application.Services.CurrentUserService;
 using ClientService.Application.User.Command;
 using ClientService.Application.User.Model;
 using ClientService.Domain.Wrappers;
@@ -28,13 +30,13 @@ namespace ClientService.Application.User.Handler
             {
                 var currentUser = _currentUserService.GetCurrentAccount();
                 if(currentUser == null)
-                    return new Response<VehicleResponse?>(code: -1, message: "Internal server error");
+                    return new Response<VehicleResponse?>(code: (int)ResponseCode.AccountErrorNotFound, message: ResponseCode.AccountErrorNotFound.GetDescription());
 
               
                 
                 if(currentUser.LicensePlate == null) 
-                    return new Response<VehicleResponse?>(code: 61,
-                        data: null
+                    return new Response<VehicleResponse?>(code: (int)ResponseCode.VehicleErrorNotFound,
+                        message: ResponseCode.VehicleErrorNotFound.GetDescription()
                     );
 
                 return new Response<VehicleResponse?>(code: 0,
@@ -53,7 +55,7 @@ namespace ClientService.Application.User.Handler
             }
             catch (Exception ex)
             {
-                return new Response<VehicleResponse?>(code: -1, message: "Internal server error");
+                return new Response<VehicleResponse?>(code: (int)ResponseCode.Failed, message: ResponseCode.Failed.GetDescription());
             }
             finally
             {

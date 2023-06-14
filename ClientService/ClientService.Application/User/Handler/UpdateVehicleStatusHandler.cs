@@ -1,4 +1,6 @@
-﻿using ClientService.Application.Services.CurrentUserService;
+﻿using ClientService.Application.Common.Enums;
+using ClientService.Application.Common.Extensions;
+using ClientService.Application.Services.CurrentUserService;
 using ClientService.Application.User.Command;
 using ClientService.Application.User.Model;
 using ClientService.Domain.Wrappers;
@@ -34,7 +36,7 @@ namespace ClientService.Application.User.Handler
                 var vehicle = _unitOfWork.AccountRepository.FirstOrDefault(x => x.Id.ToString() == request.Id && x.Status == Domain.Common.VehicleStatus.Waiting);
                 if (vehicle == null)
                 {
-                    return new Response<bool>(code: -1, message: "Invalid vehicle");
+                    return new Response<bool>(code: (int)ResponseCode.AccountErrorNotFound, message: ResponseCode.AccountErrorNotFound.GetDescription());
                 }
 
                 vehicle.Status = request.Approved ? Domain.Common.VehicleStatus.Approved : Domain.Common.VehicleStatus.Deny;
@@ -47,7 +49,7 @@ namespace ClientService.Application.User.Handler
             }
             catch (Exception ex)
             {
-                return new Response<bool>(code: -1, message: "Internal server error");
+                return new Response<bool>(code: (int)ResponseCode.Failed, message: ResponseCode.Failed.GetDescription());
             }
             finally
             {
