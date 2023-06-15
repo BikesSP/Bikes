@@ -6,10 +6,10 @@ using ClientService.Application.UserPost.Model;
 using ClientService.Domain.Wrappers;
 using ClientService.Infrastructure.Repositories;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,8 +37,8 @@ namespace ClientService.Application.UserPost.Handler
                 var result = await _unitOfWork.PostRepository.PaginationAsync(
                         page: request.PageNumber,
                         pageSize: request.PageSize,
-                        expression: request.GetExpressions(),
-                        includeFunc: post => post.Include(x => x.Author).Include(x => x.StartStation).Include(x => x.EndStation)
+                        filter: request.GetExpressions(),
+                        includeFunc: (query) => query.Include(post => post.Author).Include(post => post.EndStation).Include(post => post.StartStation)
                     );
             
 
@@ -57,13 +57,13 @@ namespace ClientService.Application.UserPost.Handler
                                 StartStationId = post.StartStationId,
                                 EndStationId = post.EndStationId,
                                 AuthorId = post.AuthorId,
-                                AuthorName = post.Author.Name,
+                                AuthorName = post.Author?.Name,
                                 Status = post.Status.ToString().ToUpper(),
                                 StartTime = post.StartTime,
                                 FeedbackContent = post.FeedbackContent,
                                 FeedbackPoint = post.FeedbackPoint,
-                                StartStation = post.StartStation.Name,
-                                EndStation = post.EndStation.Name,
+                                StartStation = post.StartStation?.Name,
+                                EndStation = post.EndStation?.Name,
                                 CreatedAt = post.CreatedAt,
                                 UpdatedAt = post.UpdatedAt
                             })

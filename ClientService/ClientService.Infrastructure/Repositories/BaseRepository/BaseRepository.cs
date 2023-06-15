@@ -125,16 +125,18 @@ namespace Repository.Repositories.BaseRepository
         }
 
         public async Task<BasePaginationEntity<TEntity>> PaginationAsync(int page = 0,
-        int pageSize = 20,
-        Expression<Func<TEntity, bool>> expression = null,
-        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
-        Func<IQueryable<TEntity>, IQueryable<TEntity>>? includeFunc = null,
-        bool disableTracking = true)
+       int pageSize = 20,
+       Expression<Func<TEntity, bool>>? filter = null,
+       Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeFunc = null,
+       Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
+        CancellationToken cancellationToken = default)
         {
             IQueryable<TEntity> query = _dbContext.Set<TEntity>();
 
-            if (disableTracking) query = query.AsNoTracking();
-            if (expression != null) query = query.Where(expression);
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
 
             if (includeFunc != null)
             {
@@ -145,12 +147,12 @@ namespace Repository.Repositories.BaseRepository
             {
                 query = orderBy(query);
             }
-            var total = await query.CountAsync();
+            var total = await query.CountAsync(cancellationToken);
 
             query = query.Skip((page - 1) * pageSize)
                 .Take(pageSize);
 
-            var data = await query.ToListAsync();
+            var data = await query.ToListAsync(cancellationToken);
 
             return new BasePaginationEntity<TEntity>() { Data = data, Total = total };
         }

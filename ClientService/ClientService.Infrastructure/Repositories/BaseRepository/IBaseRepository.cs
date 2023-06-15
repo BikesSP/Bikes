@@ -1,5 +1,6 @@
 ﻿using ClientService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
 namespace Repository.Repositories.BaseRepository
@@ -34,9 +35,9 @@ namespace Repository.Repositories.BaseRepository
 
         public Task<BasePaginationEntity<TEntity>> PaginationAsync(int page = 0,
         int pageSize = 20,
-        Expression<Func<TEntity, bool>> expression = null,
-        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
-        Func<IQueryable<TEntity>, IQueryable<TEntity>>? includeFunc = null,
-        bool disableTracking = true);
+        Expression<Func<TEntity, bool>>? filter = null,
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeFunc = null,
+        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
+         CancellationToken cancellationToken = default);
     }
 }
