@@ -36,7 +36,7 @@ namespace ClientService.Application.User.Handler
         {
             try
             {
-                var user = _currentUserService.GetCurrentAccount();
+                var user = await _currentUserService.GetCurrentAccount();
                 if (user == null)
                 {
                     return new Response<UserProfileResponse?>(code: (int)ResponseCode.Failed, message: ResponseCode.Failed.GetDescription());

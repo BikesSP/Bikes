@@ -1,102 +1,158 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ClientService.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Repository.Repositories.BaseRepository
 {
     public class BaseRepository<TContext, TEntity> : IBaseRepository<TEntity> where TContext : DbContext where TEntity : class
     {
-        private readonly TContext _context;
-        private readonly DbSet<TEntity> _dbSet;
+        private readonly DbContext _dbContext;
 
-        public BaseRepository(TContext context)
+        public BaseRepository(DbContext dbContext)
         {
-            _context = context;
-            _dbSet = context.Set<TEntity>();
+            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
-
-        public void Add(TEntity entity)
+        public Task<IQueryable<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> expression = null, Func<IQueryable<TEntity>, IQueryable<TEntity>>? includeFunc = null,
+            bool disableTracking = true)
         {
-            _dbSet.Add(entity);
-        }
+            IQueryable<TEntity> query = _dbContext.Set<TEntity>();
 
-        public TEntity? Find(int id)
-        {
-            return _dbSet.Find(id);
-        }
+            if (disableTracking) query = query.AsNoTracking();
 
-        public TEntity? FirstOrDefault(Expression<Func<TEntity, bool>>? expression = null, Func<IQueryable<TEntity>, IQueryable<TEntity>>? includeFunc = null)
-        {
-            IQueryable<TEntity> query = _dbSet;
-
-            if (expression != null)
-            {
-                query = query.Where(expression);
-            }
-
-            if(includeFunc != null)
-            {
-                query = includeFunc(query);
-            }    
-
-            return query.FirstOrDefault();
-        }
-
-        public IEnumerable<TEntity> GetAll(Expression<Func<TEntity, bool>>? expression = null, Func<IQueryable<TEntity>, IQueryable<TEntity>>? includeFunc = null)
-        {
-            IQueryable<TEntity> query = _dbSet;
-
-            if(expression != null)
-            {
-                query = query.Where(expression);
-            }
+            if (expression != null) query = query.Where(expression);
 
             if (includeFunc != null)
             {
                 query = includeFunc(query);
             }
 
-            return query.ToList();
+            return Task.FromResult(query.AsQueryable());
         }
 
-        public void Remove(TEntity entity)
+        public Task<IQueryable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> expression)
         {
-            _dbSet.Remove(entity);
-            _context.SaveChanges();
+            return Task.FromResult(_dbContext.Set<TEntity>().Where(expression).AsQueryable());
         }
 
-        public (int, IEnumerable<TEntity>) Pagination(int page = 0,
+        public Task<IQueryable<TEntity>> GetAsync(
+            Expression<Func<TEntity, bool>> expression = null,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+            Func<IQueryable<TEntity>, IQueryable<TEntity>>? includeFunc = null,
+            bool disableTracking = true)
+        {
+            IQueryable<TEntity> query = _dbContext.Set<TEntity>();
+
+            if (disableTracking) query = query.AsNoTracking();
+
+            if (expression != null) query = query.Where(expression);
+
+            if (includeFunc != null)
+            {
+                query = includeFunc(query);
+            }
+
+            
+
+            return Task.FromResult(orderBy != null ? orderBy(query).AsQueryable() : query.AsQueryable());
+        }
+
+        public virtual async Task<TEntity?> GetByIdAsync(object id)
+        {
+            return await _dbContext.Set<TEntity>().FindAsync(id);
+        }
+
+        public async Task<TEntity> AddAsync(TEntity entity)
+        {
+            await _dbContext.Set<TEntity>().AddAsync(entity);
+            return entity;
+        }
+
+        public Task UpdateAsync(TEntity entity)
+        {
+            if (_dbContext.Entry(entity).State == EntityState.Detached) _dbContext.Set<TEntity>().Attach(entity);
+
+            _dbContext.Entry(entity).State = EntityState.Modified;
+
+            _dbContext.Set<TEntity>().Update(entity);
+            return Task.CompletedTask;
+        }
+
+        public Task DeleteAsync(TEntity entity)
+        {
+            if (_dbContext.Entry(entity).State == EntityState.Detached) _dbContext.Set<TEntity>().Attach(entity);
+
+            _dbContext.Set<TEntity>().Remove(entity);
+
+            return Task.CompletedTask;
+        }
+
+        public async Task AddRange(IEnumerable<TEntity> entities)
+        {
+            await _dbContext.Set<TEntity>().AddRangeAsync(entities);
+        }
+
+        public Task DeleteRange(IEnumerable<TEntity> entities)
+        {
+            var listEntities = entities.ToList();
+            listEntities.ForEach(entity =>
+            {
+                if (_dbContext.Entry(entity).State == EntityState.Detached) _dbContext.Set<TEntity>().Attach(entity);
+            });
+
+            _dbContext.Set<TEntity>().RemoveRange(listEntities);
+
+            return Task.CompletedTask;
+        }
+
+        public async Task DeleteAsync(object id)
+        {
+            var entityToDelete = await _dbContext.Set<TEntity>().FindAsync(id);
+
+            if (entityToDelete != null)
+            {
+                await DeleteAsync(entityToDelete);
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+
+        public bool Any()
+        {
+            return _dbContext.Set<TEntity>().Any();
+        }
+
+        public async Task<BasePaginationEntity<TEntity>> PaginationAsync(int page = 0,
         int pageSize = 20,
-        Expression<Func<TEntity, bool>>? expression = null, 
-        Func<IQueryable<TEntity>, IQueryable<TEntity>>? includeFunc = null)
+        Expression<Func<TEntity, bool>> expression = null,
+        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+        Func<IQueryable<TEntity>, IQueryable<TEntity>>? includeFunc = null,
+        bool disableTracking = true)
         {
-            IQueryable<TEntity> query = _dbSet;
+            IQueryable<TEntity> query = _dbContext.Set<TEntity>();
 
-            if (expression != null)
-            {
-                query = query.Where(expression);
-            }
+            if (disableTracking) query = query.AsNoTracking();
+            if (expression != null) query = query.Where(expression);
 
             if (includeFunc != null)
             {
                 query = includeFunc(query);
             }
 
-            var total = query.Count();
+            if (orderBy != null)
+            {
+                query = orderBy(query);
+            }
+            var total = await query.CountAsync();
 
             query = query.Skip((page - 1) * pageSize)
                 .Take(pageSize);
 
-            var data = query.ToList();
+            var data = await query.ToListAsync();
 
-            return (total, data);
-        }
-
-        public void Update(TEntity entity)
-        {
-            _dbSet.Attach(entity);
-            _context.Entry(entity).State = EntityState.Modified;
+            return new BasePaginationEntity<TEntity>() { Data = data, Total = total };
         }
     }
 }

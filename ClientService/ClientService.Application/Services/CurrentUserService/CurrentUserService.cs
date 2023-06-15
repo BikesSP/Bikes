@@ -41,17 +41,20 @@ public class CurrentUserService : ICurrentUserService
         }
     }
 
-    public Account GetCurrentAccount(Func<IQueryable<Account>, IQueryable<Account>>? includeFunc = null)
+    public async Task<Account> GetCurrentAccount(Func<IQueryable<Account>, IQueryable<Account>>? includeFunc = null)
     {
         var currentPrincipal = CurrentPrincipal;
         if (currentPrincipal == null)
         {
             throw new ApiException(ResponseCode.Unauthorized);
         }
-        var account =
-            _unitOfWork.AccountRepository.FirstOrDefault(
+        var accountQuery =
+            await _unitOfWork.AccountRepository.GetAsync(
                 expression: acc => acc.Email.ToLower().Equals(currentPrincipal.ToLower()),
-                includeFunc: includeFunc);
+                includeFunc: includeFunc,
+                disableTracking: false);
+
+        var account = accountQuery.FirstOrDefault();
 
         return account ?? throw new ApiException(ResponseCode.Unauthorized);
     }

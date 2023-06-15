@@ -25,5 +25,5 @@ public class PaginationData<T>
     public int PageSize { get; set; } = 0;
     public int TotalPage { get; set; } = 0;
     public long TotalSize { get; set; } = 0;
-    public T[] Items { get; set; } = new T[0];
+    public List<T> Items { get; set; } = new List<T>();
 }

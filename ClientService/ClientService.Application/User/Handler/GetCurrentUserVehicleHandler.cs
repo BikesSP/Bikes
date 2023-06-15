@@ -28,7 +28,7 @@ namespace ClientService.Application.User.Handler
         {
             try
             {
-                var currentUser = _currentUserService.GetCurrentAccount();
+                var currentUser = await _currentUserService.GetCurrentAccount();
                 if(currentUser == null)
                     return new Response<VehicleResponse?>(code: (int)ResponseCode.AccountErrorNotFound, message: ResponseCode.AccountErrorNotFound.GetDescription());
 

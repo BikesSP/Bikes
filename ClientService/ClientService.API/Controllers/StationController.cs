@@ -10,7 +10,6 @@ namespace ClientService.API.Controllers
 {
     [ApiController]
     [Route("/api/v1/stations")]
-
     public class StationController : ApiControllerBase
     {
         public StationController(IMediator mediator, ILogger<StationController> logger) : base(mediator, logger)

@@ -15,7 +15,7 @@ namespace ClientService.Application.Services.CurrentUserService
         public string? CurrentPrincipal { get; }
 
         public ClaimsPrincipal GetCurrentPrincipalFromToken(string token);
-        Account GetCurrentAccount(Func<IQueryable<Account>, IQueryable<Account>>? includeFunc = null);
+        Task<Account> GetCurrentAccount(Func<IQueryable<Account>, IQueryable<Account>>? includeFunc = null);
 
     }
 }

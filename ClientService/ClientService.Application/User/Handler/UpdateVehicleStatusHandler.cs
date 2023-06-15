@@ -33,7 +33,8 @@ namespace ClientService.Application.User.Handler
         {
             try
             {
-                var vehicle = _unitOfWork.AccountRepository.FirstOrDefault(x => x.Id.ToString() == request.Id && x.Status == Domain.Common.VehicleStatus.Waiting);
+                var vehicleQuery = await _unitOfWork.AccountRepository.GetAsync(expression: x => x.Id.ToString() == request.Id && x.Status == Domain.Common.VehicleStatus.Waiting);
+                var vehicle = vehicleQuery.FirstOrDefault();
                 if (vehicle == null)
                 {
                     return new Response<bool>(code: (int)ResponseCode.AccountErrorNotFound, message: ResponseCode.AccountErrorNotFound.GetDescription());
@@ -41,7 +42,7 @@ namespace ClientService.Application.User.Handler
 
                 vehicle.Status = request.Approved ? Domain.Common.VehicleStatus.Approved : Domain.Common.VehicleStatus.Deny;
 
-                _unitOfWork.AccountRepository.Update(vehicle);
+                await _unitOfWork.AccountRepository.UpdateAsync(vehicle);
 
                 var result = await _unitOfWork.SaveChangesAsync();
 

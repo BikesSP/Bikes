@@ -33,7 +33,7 @@ namespace ClientService.Application.User.Handler
         {
             try
             {
-                var user = _currentUserService.GetCurrentAccount();
+                var user = await _currentUserService.GetCurrentAccount();
                 if (user == null)
                 {
                     return new Response<UserProfileResponse?>(code: (int)ResponseCode.Failed, message: ResponseCode.Failed.GetDescription());
@@ -45,7 +45,7 @@ namespace ClientService.Application.User.Handler
                 user.Card = request.Card;
                 user.IsUpdated = true;
 
-                _unitOfWork.AccountRepository.Update(user);
+                await _unitOfWork.AccountRepository.UpdateAsync(user);
                 await _unitOfWork.SaveChangesAsync();
                 return new Response<UserProfileResponse?>(code: 0,
                     data: new UserProfileResponse()

@@ -34,7 +34,7 @@ namespace ClientService.Application.Stations.Handler
         public async Task<StationDetailResponse> Handle(CreateStationRequest request, CancellationToken cancellationToken)
         {
             var station = _mapper.Map<Station>(request);
-            _unitOfWork.StationRepository.Add(station);
+            await _unitOfWork.StationRepository.AddAsync(station);
             await _unitOfWork.SaveChangesAsync();
             return _mapper.Map<StationDetailResponse>(station);
         }

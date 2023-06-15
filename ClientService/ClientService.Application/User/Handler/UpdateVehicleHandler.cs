@@ -36,7 +36,7 @@ namespace ClientService.Application.User.Handler
         {
             try
             {
-                var vehicle = _currentUserService.GetCurrentAccount();
+                var vehicle = await _currentUserService.GetCurrentAccount();
                 if (vehicle == null)
                     return new Response<VehicleResponse?>(code: (int)ResponseCode.Failed, message: ResponseCode.Failed.GetDescription());
 
@@ -48,7 +48,7 @@ namespace ClientService.Application.User.Handler
                 vehicle.Type = request.Type == "BIKE" ? VehicleType.Bike : VehicleType.Car;
                 vehicle.Status = VehicleStatus.Waiting;
 
-                _unitOfWork.AccountRepository.Update(vehicle);
+                await _unitOfWork.AccountRepository.UpdateAsync(vehicle);
                 var result = await _unitOfWork.SaveChangesAsync();
 
                 return result > 0 ? new Response<VehicleResponse?>(code: 0,

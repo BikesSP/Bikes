@@ -39,14 +39,15 @@ namespace ClientService.Application.UserPost.Handler
         {
             try
             {
-                var user = _currentUserService.GetCurrentAccount();
+                var user = await _currentUserService.GetCurrentAccount();
                 if(!user.IsUpdated)
                 {
                     return new Response<PostResponse?>(code: (int)ResponseCode.PostErrorUnupdatedAccount, message: ResponseCode.PostErrorUnupdatedAccount.GetDescription());
                 }
 
-                var inProgressTrip = _unitOfWork.TripRepository.FirstOrDefault(x => (x.GrabberId == user.Id || x.PassengerId == user.Id) && x.TripStatus == Domain.Common.TripStatus.OnGoing);
-                if(inProgressTrip != null)
+                var inProgressTripQuery = await _unitOfWork.TripRepository.GetAsync(x => (x.GrabberId == user.Id || x.PassengerId == user.Id) && x.TripStatus == Domain.Common.TripStatus.OnGoing);
+                var inProgressTrip = inProgressTripQuery.FirstOrDefault();
+                if (inProgressTrip != null)
                 {
                     return new Response<PostResponse?>(code: (int)ResponseCode.TripErrorOngoingTrip, message: ResponseCode.TripErrorOngoingTrip.GetDescription());
                 }
@@ -56,15 +57,23 @@ namespace ClientService.Application.UserPost.Handler
                     return new Response<PostResponse?>(code: (int)ResponseCode.PostErrorUnregisteredVehicle, message: ResponseCode.PostErrorUnregisteredVehicle.GetDescription());
                 }
 
-                //TODO: will check this later
-                /*var existedPost = _unitOfWork.PostRepository.FirstOrDefault(x => x.AuthorId == user.Id)*/
-                
-                if(request.EndStationId == request.StartStationId)
+                //TODO: fix later
+                /*var existedPostQuery = await _unitOfWork.PostRepository.GetAsync(x => x.AuthorId == user.Id && Math.Abs((x.StartTime -request.StartTime).Minutes) <= 30);
+                var existedPost = existedPostQuery.FirstOrDefault();
+                if (existedPost != null)
+                {
+                    return new Response<PostResponse?>(code: (int)ResponseCode.PostErrorConflictTime, message: ResponseCode.PostErrorConflictTime.GetDescription());
+
+                }*/
+
+
+                if (request.EndStationId == request.StartStationId)
                 {
                     return new Response<PostResponse?>(code: (int)ResponseCode.PostErrorInvalidStation, message: ResponseCode.PostErrorInvalidStation.GetDescription());
                 }
 
-                var stations = _unitOfWork.StationRepository.GetAll(expression: x => x.Id == request.EndStationId || x.Id == request.StartStationId, includeFunc: x => x.Include(station => station.NextStation));
+                var stationsQuery = await _unitOfWork.StationRepository.GetAllAsync(expression: x => x.Id == request.EndStationId || x.Id == request.StartStationId, includeFunc: x => x.Include(station => station.NextStation));
+                var stations = stationsQuery.ToList();
                 if(stations.Count() != 2)
                 {
                     return new Response<PostResponse?>(code: (int)ResponseCode.PostErrorStationNotFound, message: ResponseCode.PostErrorStationNotFound.GetDescription());
@@ -81,23 +90,24 @@ namespace ClientService.Application.UserPost.Handler
 
                 Post post = new Post()
                 {
-                    TripRole=request.Role == Role.Grabber.GetDescription() ? Role.Grabber : Role.Passenger,
+                    TripRole=request.Role == Role.Grabber.GetDescription().ToUpper() ? Role.Grabber : Role.Passenger,
                     Description=request.Description.Trim(),
                     StartStationId=request.StartStationId,
                     EndStationId=request.EndStationId,
                     AuthorId=user.Id,
                     StartTime=request.StartTime,
-                    Status=PostStatus.Created
+                    Status=PostStatus.Created,
+                    FeedbackContent=""
                 };
 
-                _unitOfWork.PostRepository.Add(post);
+                await _unitOfWork.PostRepository.AddAsync(post);
                 var result = await _unitOfWork.SaveChangesAsync();
 
                 return result > 0 ? 
                     new Response<PostResponse?>(code: 0, data: new PostResponse()
                     {
                         Id=post.Id,
-                        TripRole = post.TripRole.GetDescription(),
+                        TripRole = post.TripRole.GetDescription().ToUpper(),
                         Description = post.Description,
                         StartStationId = post.StartStationId,
                         EndStationId = post.EndStationId,
