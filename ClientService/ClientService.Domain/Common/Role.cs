@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ServiceStack.DataAnnotations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,13 @@ namespace ClientService.Domain.Common
 {
     public enum Role
     {
-        Admin, User, Grabber, Passenger
+        [Description("ADMIN")]
+        Admin,
+        [Description("USER")]
+        User,
+        [Description("GRABBER")]
+        Grabber,
+        [Description("PASSENGER")]
+        Passenger
     }
 }
