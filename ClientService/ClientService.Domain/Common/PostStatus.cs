@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ServiceStack.DataAnnotations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,9 @@ namespace ClientService.Domain.Common
 {
     public enum PostStatus
     {
-        Created, Completed
+        [Description("CREATED")]
+        Created,
+        [Description("COMPLETED")]
+        Completed
     }
 }

@@ -2,7 +2,9 @@
 using ClientService.Domain.Entities;
 using ClientService.Infrastructure.Persistence;
 using ClientService.Infrastructure.Repositories.AccountRepository;
+using ClientService.Infrastructure.Repositories.PostRepository;
 using ClientService.Infrastructure.Repositories.StationRepository;
+using ClientService.Infrastructure.Repositories.TripRepository;
 using Google;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,31 +16,29 @@ public class UnitOfWork : IUnitOfWork
     private readonly ApplicationDbContext _dbContext;
     private bool _disposed;
 
-    private IAccountRepository accountRepository;
-    private IStationRepository stationRepository;
+    private IAccountRepository _accountRepository;
+    private IStationRepository _stationRepository;
+    private ITripRepository _tripRepository;
+    private IPostRepository _postRepository;
 
     public IAccountRepository AccountRepository
     {
-        get
-        {
-            if (this.accountRepository == null)
-            {
-                this.accountRepository = new AccountRepository.AccountRepository(_dbContext);
-            }
-            return this.accountRepository;
-        }
+        get => _accountRepository ??= new AccountRepository.AccountRepository(_dbContext);
     }
 
     public IStationRepository StationRepository
     {
-        get
-        {
-            if (this.stationRepository == null)
-            {
-                this.stationRepository = new StationRepository.StationRepository(_dbContext);
-            }
-            return this.stationRepository;
-        }
+        get => _stationRepository ??= new StationRepository.StationRepository(_dbContext);
+    }
+
+    public ITripRepository TripRepository
+    {
+        get => _tripRepository ??= new TripRepository.TripRepository(_dbContext);
+    }
+
+    public IPostRepository PostRepository
+    {
+        get => _postRepository ??= new PostRepository.PostRepository(_dbContext);
     }
 
     public UnitOfWork(ApplicationDbContext dbContext)

@@ -1,5 +1,6 @@
-﻿using ClientService.Application.Auth.Command;
-using ClientService.Application.Auth.Model;
+﻿using ClientService.Application.Auth.Model;
+using ClientService.Application.User.Command;
+using ClientService.Application.User.Model;
 using ClientService.Domain.Wrappers;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -24,25 +25,42 @@ namespace ClientService.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> getCurrentUserProfile()
         {
-            var email = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
-            Console.WriteLine(email);
-
-
-            return Ok(await mediator.Send(new GetCurrentUserRequest()
-            {
-                Email = email
-            }));
+            return Ok(await mediator.Send(new GetCurrentUserRequest()));
         }
 
-        [HttpPost("me")]
+        [HttpPut("me")]
         [Authorize]
         [ProducesResponseType(typeof(Response<TokenResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> LoginWithGoogle([FromBody] UpdateUserProfileRequest request)
         {
-            var email = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+            return Ok(await mediator.Send(request));
+        }
 
-            request.Email = email;
+        [HttpGet("me/vehicle")]
+        [Authorize]
+        [ProducesResponseType(typeof(Response<VehicleResponse?>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetCurrentUserVehicle()
+        {
+            return Ok(await mediator.Send(new GetCurrentUserVehicleRequest()));
+        }
+
+        [HttpPut("me/vehicle")]
+        [Authorize]
+        [ProducesResponseType(typeof(Response<VehicleResponse?>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> UpdateCurrentUserVehicle([FromBody] UpdateVehicleRequest request)
+        {
+            return Ok(await mediator.Send(request));
+        }
+
+        [HttpPut("me/vehicle/{id}/status")]
+        [ProducesResponseType(typeof(Response<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> UpdateVehicleStatus(string id, [FromBody] UpdateVehicleStatusRequest request)
+        {
+            request.Id = id;
             return Ok(await mediator.Send(request));
         }
     }

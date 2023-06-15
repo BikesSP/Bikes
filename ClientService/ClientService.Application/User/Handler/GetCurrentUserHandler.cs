@@ -1,7 +1,10 @@
-﻿using ClientService.Application.Auth.Command;
-using ClientService.Application.Auth.Model;
+﻿using ClientService.Application.Common.Enums;
+using ClientService.Application.Common.Extensions;
+using ClientService.Application.Services.CurrentUserService;
 using ClientService.Application.Services.GoogleAuthService;
 using ClientService.Application.Services.JwtService;
+using ClientService.Application.User.Command;
+using ClientService.Application.User.Model;
 using ClientService.Domain.Wrappers;
 using ClientService.Infrastructure.Repositories;
 using MediatR;
@@ -13,28 +16,30 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClientService.Application.Auth.Handler
+namespace ClientService.Application.User.Handler
 {
     public class GetCurrentUserHandler : IRequestHandler<GetCurrentUserRequest, Response<UserProfileResponse?>>
     {
-        
+
         private readonly ILogger<GetCurrentUserHandler> _logger;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICurrentUserService _currentUserService;
 
         public GetCurrentUserHandler(
-            ILogger<GetCurrentUserHandler> logger, IUnitOfWork unitOfWork)
+            ILogger<GetCurrentUserHandler> logger, IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
+            _currentUserService = currentUserService;
         }
         public async Task<Response<UserProfileResponse?>> Handle(GetCurrentUserRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                var user = _unitOfWork.AccountRepository.FirstOrDefault(expression: account => account.Email== request.Email);
-                if (user==null)
+                var user = await _currentUserService.GetCurrentAccount();
+                if (user == null)
                 {
-                    return new Response<UserProfileResponse?>(code: -1, message: "Internal server error");
+                    return new Response<UserProfileResponse?>(code: (int)ResponseCode.Failed, message: ResponseCode.Failed.GetDescription());
                 }
                 return new Response<UserProfileResponse?>(code: 0,
                     data: new UserProfileResponse()
@@ -51,7 +56,7 @@ namespace ClientService.Application.Auth.Handler
             }
             catch (Exception ex)
             {
-                return new Response<UserProfileResponse?>(code: -1, message: "Internal server error");
+                return new Response<UserProfileResponse?>(code: (int)ResponseCode.Failed, message: ResponseCode.Failed.GetDescription());
             }
             finally
             {

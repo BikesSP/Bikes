@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using ClientService.Application.Common.Behaviours;
 using ClientService.Application.Common.Mappings;
+using ClientService.Application.Services.CurrentUserService;
 using ClientService.Application.Services.GoogleAuthService;
 using ClientService.Application.Services.JwtService;
 using FluentValidation;
@@ -33,6 +34,8 @@ public static class ConfigureServices
 
         // Google authentication
         services.AddScoped<IGoogleAuthService, GoogleAuthService>();
+
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
 
         return services;
     }

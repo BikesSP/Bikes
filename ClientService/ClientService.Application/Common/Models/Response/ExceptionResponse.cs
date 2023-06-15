@@ -10,9 +10,9 @@ public class ExceptionResponse
 {
     public ExceptionResponse()
     {
-        ErrorCode = (int)ResponseCode.ErrorCommon;
-        Error = ResponseCode.ErrorCommon.ToString();
-        Message = ResponseCode.ErrorCommon.GetDescription();
+        ErrorCode = (int)ResponseCode.CommonError;
+        Error = ResponseCode.CommonError.ToString();
+        Message = ResponseCode.CommonError.GetDescription();
     }
 
     public ExceptionResponse(ApiException apiException)

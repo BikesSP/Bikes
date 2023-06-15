@@ -41,7 +41,8 @@ namespace ClientService.Application.Auth.Handler
                 }
 
                 // Check if user existed
-                var account = _unitOfWork.AccountRepository.FirstOrDefault(acc => acc.Email.ToLower().Equals(payload.Email.ToLower()));
+                var accountQuery = await _unitOfWork.AccountRepository.GetAsync(acc => acc.Email.ToLower().Equals(payload.Email.ToLower()));
+                var account = accountQuery.FirstOrDefault();
 
                 if (account == null)
                 {
@@ -55,7 +56,7 @@ namespace ClientService.Application.Auth.Handler
                         IsUpdated= false,
                         SubjectId=payload.Subject
                     };
-                    _unitOfWork.AccountRepository.Add(account);
+                    await _unitOfWork.AccountRepository.AddAsync(account);
                 }
 
                 // Generate jwt token 
