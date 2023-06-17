@@ -107,7 +107,7 @@ namespace ClientService.Application.UserPost.Handler
                     new Response<PostResponse?>(code: 0, data: new PostResponse()
                     {
                         Id=post.Id,
-                        TripRole = post.TripRole.GetDescription().ToUpper(),
+                        Role = post.TripRole.GetDescription().ToUpper(),
                         Description = post.Description,
                         StartStationId = post.StartStationId,
                         EndStationId = post.EndStationId,

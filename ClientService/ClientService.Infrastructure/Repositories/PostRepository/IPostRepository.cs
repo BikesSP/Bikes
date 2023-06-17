@@ -10,5 +10,6 @@ namespace ClientService.Infrastructure.Repositories.PostRepository
 {
     public interface IPostRepository: IBaseRepository<Post>
     {
+
     }
 }

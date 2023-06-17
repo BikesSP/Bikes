@@ -16,41 +16,41 @@ using System.Threading.Tasks;
 
 namespace ClientService.Application.UserPost.Handler
 {
-    public class GetActivePostHandler: IRequestHandler<GetActivePostsRequest, PaginationResponse<PostResponse>>
+    public class GetAllPostsHandler : IRequestHandler<GetAllPostsRequest, PaginationResponse<PostResponse>>
     {
-        private readonly ILogger<GetActivePostHandler> _logger;
+        private readonly ILogger<GetAllPostsHandler> _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICurrentUserService _currentUserService;
 
-        public GetActivePostHandler(
-            ILogger<GetActivePostHandler> logger, IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
+        public GetAllPostsHandler(
+            ILogger<GetAllPostsHandler> logger, IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
             _currentUserService = currentUserService;
         }
 
-        public async Task<PaginationResponse<PostResponse>> Handle(GetActivePostsRequest request, CancellationToken cancellationToken)
+        public async Task<PaginationResponse<PostResponse>> Handle(GetAllPostsRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                var user = _currentUserService.GetCurrentAccount();
-                request.ExceptUserId = user.Id.ToString();
+                var user = await _currentUserService.GetCurrentAccount();
+                request.AuthorEmail = user.Email;
                 var result = await _unitOfWork.PostRepository.PaginationAsync(
                         page: request.PageNumber,
                         pageSize: request.PageSize,
                         filter: request.GetExpressions(),
                         includeFunc: (query) => query.Include(post => post.Author).Include(post => post.EndStation).Include(post => post.StartStation)
                     );
-            
+
 
                 return new PaginationResponse<PostResponse>(code: 0,
                         data: new PaginationData<PostResponse>()
                         {
-                            Page= request.PageNumber,
-                            PageSize= request.PageSize,
-                            TotalSize=result.Total,
-                            TotalPage= (int?)((result?.Total + (long)request.PageSize - 1) / (long)request.PageSize) ?? 0,
+                            Page = request.PageNumber,
+                            PageSize = request.PageSize,
+                            TotalSize = result.Total,
+                            TotalPage = (int?)((result?.Total + (long)request.PageSize - 1) / (long)request.PageSize) ?? 0,
                             Items = result.Data.ConvertAll(post => new PostResponse()
                             {
                                 Id = post.Id,
@@ -81,4 +81,5 @@ namespace ClientService.Application.UserPost.Handler
             }
         }
     }
+
 }

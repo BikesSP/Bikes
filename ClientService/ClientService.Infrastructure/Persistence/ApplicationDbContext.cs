@@ -30,5 +30,6 @@ namespace ClientService.Infrastructure.Persistence
         public DbSet<Account> Accounts => Set<Account>();
         public DbSet<Post> Posts => Set<Post>();
         public DbSet<Trip> Trips => Set<Trip>();
+        public DbSet<AccountPost> AccountPosts => Set<AccountPost>();
     }
 }

@@ -55,8 +55,6 @@ namespace Repository.Repositories.BaseRepository
                 query = includeFunc(query);
             }
 
-            
-
             return Task.FromResult(orderBy != null ? orderBy(query).AsQueryable() : query.AsQueryable());
         }
 
