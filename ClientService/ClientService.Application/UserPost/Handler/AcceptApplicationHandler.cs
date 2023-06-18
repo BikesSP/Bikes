@@ -35,7 +35,7 @@ namespace ClientService.Application.UserPost.Handler
         {
             try
             {
-                var postQuery = await _unitOfWork.PostRepository.GetAsync(expression: x => x.Id == request.PostId, includeFunc: x => x.Include(post => post.Applier).Include(post => post.Author));
+                var postQuery = await _unitOfWork.PostRepository.GetAsync(expression: x => x.Id == request.PostId, includeFunc: x => x.Include(post => post.Applier).Include(post => post.Author), disableTracking: false);
                 var post = postQuery.FirstOrDefault();
 
                 if (post?.Status != PostStatus.Created)

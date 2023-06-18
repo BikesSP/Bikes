@@ -36,7 +36,7 @@ namespace ClientService.Application.UserPost.Handler
                     return new Response<bool>(code: (int)ResponseCode.PostErrorUnupdatedAccount, message: ResponseCode.PostErrorUnupdatedAccount.GetDescription());
                 }
 
-                var postQuery = await _unitOfWork.PostRepository.GetAsync(expression: x => x.Id == request.Id, includeFunc: x => x.Include(post => post.Applier));
+                var postQuery = await _unitOfWork.PostRepository.GetAsync(expression: x => x.Id == request.Id, includeFunc: x => x.Include(post => post.Applier), disableTracking: false);
                 var post = postQuery.FirstOrDefault();
 
                 if (post?.Status != PostStatus.Created) { 
