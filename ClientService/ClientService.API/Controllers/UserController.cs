@@ -1,4 +1,5 @@
 ﻿using ClientService.Application.Auth.Model;
+using ClientService.Application.Common.Models.Response;
 using ClientService.Application.User.Command;
 using ClientService.Application.User.Model;
 using ClientService.Domain.Wrappers;
@@ -56,7 +57,7 @@ namespace ClientService.API.Controllers
         }
 
         [HttpPut("me/vehicle/{id}/status")]
-        [ProducesResponseType(typeof(Response<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Response<BaseBoolResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> UpdateVehicleStatus(string id, [FromBody] UpdateVehicleStatusRequest request)
         {

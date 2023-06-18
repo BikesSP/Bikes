@@ -16,8 +16,8 @@ namespace ClientService.Application.UserPost.Model
         public UserProfileResponse Author { get; set; }
         public DateTimeOffset StartTime { get; set; }
         public string Status { get; set; }
-        public float FeedbackPoint { get; set; }
-        public string FeedbackContent { get; set; }
+        public float? FeedbackPoint { get; set; }
+        public string? FeedbackContent { get; set; }
         //TODO: will replace later
         public Station StartStation { get; set; }
         //TODO: will replace later

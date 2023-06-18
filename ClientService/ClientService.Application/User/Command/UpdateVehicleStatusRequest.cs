@@ -1,4 +1,5 @@
-﻿using ClientService.Domain.Wrappers;
+﻿using ClientService.Application.Common.Models.Response;
+using ClientService.Domain.Wrappers;
 using FluentValidation;
 using MediatR;
 using System;
@@ -16,7 +17,7 @@ namespace ClientService.Application.User.Command
             RuleFor(x => x.Approved).NotEmpty();
         }
     }
-    public class UpdateVehicleStatusRequest: IRequest<Response<bool>>
+    public class UpdateVehicleStatusRequest: IRequest<Response<BaseBoolResponse>>
     {
         [JsonIgnore]
         public string Id { get; set; }

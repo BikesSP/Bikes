@@ -1,4 +1,5 @@
-﻿using ClientService.Domain.Wrappers;
+﻿using ClientService.Application.Common.Models.Response;
+using ClientService.Domain.Wrappers;
 using FluentValidation;
 using MediatR;
 using System;
@@ -17,7 +18,7 @@ namespace ClientService.Application.UserPost.Command
             RuleFor(x => x.ApplierId).NotNull().NotEmpty();
         }
     }
-    public class AcceptApplicationRequest: IRequest<Response<bool>>
+    public class AcceptApplicationRequest: IRequest<Response<BaseBoolResponse>>
     {
         public long PostId { get; set; }
         public string ApplierId { get; set; }

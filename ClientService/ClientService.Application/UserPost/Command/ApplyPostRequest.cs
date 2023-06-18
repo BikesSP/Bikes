@@ -1,4 +1,5 @@
-﻿using ClientService.Domain.Wrappers;
+﻿using ClientService.Application.Common.Models.Response;
+using ClientService.Domain.Wrappers;
 using FluentValidation;
 using MediatR;
 using System;
@@ -16,7 +17,7 @@ namespace ClientService.Application.UserPost.Command
             RuleFor(x => x.Id).GreaterThan(0);
         }
     }
-    public class ApplyPostRequest: IRequest<Response<bool>>
+    public class ApplyPostRequest: IRequest<Response<BaseBoolResponse>>
     {
         [JsonIgnore]
         public long Id { get; set; }

@@ -18,8 +18,8 @@ namespace ClientService.Application.UserPost.Model
         public string AuthorName { get; set; }
         public DateTimeOffset StartTime { get; set; }
         public string Status { get; set; }
-        public float FeedbackPoint { get; set; }
-        public string FeedbackContent { get; set; }
+        public float? FeedbackPoint { get; set; }
+        public string? FeedbackContent { get; set; }
         public long StartStationId { get; set; }
         public string StartStation { get; set; }
         public long EndStationId { get; set; }

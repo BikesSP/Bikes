@@ -1,5 +1,6 @@
 ﻿using ClientService.Application.Common.Enums;
 using ClientService.Application.Common.Extensions;
+using ClientService.Application.Common.Models.Response;
 using ClientService.Application.Services.CurrentUserService;
 using ClientService.Application.UserPost.Command;
 using ClientService.Domain.Common;
@@ -17,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace ClientService.Application.UserPost.Handler
 {
-    public class AcceptApplicationHandler: IRequestHandler<AcceptApplicationRequest, Response<bool>>
+    public class AcceptApplicationHandler: IRequestHandler<AcceptApplicationRequest, Response<BaseBoolResponse>>
     {
         private readonly ILogger<AcceptApplicationHandler> _logger;
         private readonly IUnitOfWork _unitOfWork;
@@ -31,7 +32,7 @@ namespace ClientService.Application.UserPost.Handler
             _currentUserService = currentUserService;
         }
 
-        public async Task<Response<bool>> Handle(AcceptApplicationRequest request, CancellationToken cancellationToken)
+        public async Task<Response<BaseBoolResponse>> Handle(AcceptApplicationRequest request, CancellationToken cancellationToken)
         {
             try
             {
@@ -40,13 +41,13 @@ namespace ClientService.Application.UserPost.Handler
 
                 if (post?.Status != PostStatus.Created)
                 {
-                    return new Response<bool>(code: (int)ResponseCode.PostErrorNotFound, message: ResponseCode.PostErrorNotFound.GetDescription());
+                    return new Response<BaseBoolResponse>(code: (int)ResponseCode.PostErrorNotFound, message: ResponseCode.PostErrorNotFound.GetDescription());
                 }
 
                 var user = await _currentUserService.GetCurrentAccount();
-                if(post.AuthorId == user.Id)
+                if(post.AuthorId != user.Id)
                 {
-                    return new Response<bool>(code: (int)ResponseCode.Failed, message: ResponseCode.Failed.GetDescription());
+                    return new Response<BaseBoolResponse>(code: (int)ResponseCode.Failed, message: ResponseCode.Failed.GetDescription());
                 }
 
                 var acceptedApplierQuery = await _unitOfWork.AccountRepository.GetAsync(x => x.Id.ToString() == request.ApplierId);
@@ -58,7 +59,7 @@ namespace ClientService.Application.UserPost.Handler
 
                 if(acceptedApplier == null || post.Applier.All(x => x.Id.ToString() != request.ApplierId))
                 {
-                    return new Response<bool>(code: (int)ResponseCode.PostErrorNotExistApplier, message: ResponseCode.PostErrorNotExistApplier.GetDescription());
+                    return new Response<BaseBoolResponse>(code: (int)ResponseCode.PostErrorNotExistApplier, message: ResponseCode.PostErrorNotExistApplier.GetDescription());
                 }
 
                 Account grabber;
@@ -96,11 +97,11 @@ namespace ClientService.Application.UserPost.Handler
 
                 var res = await _unitOfWork.SaveChangesAsync();
 
-                return res > 0 ? new Response<bool>(code: 0, data: true) : new Response<bool>(code: (int)ResponseCode.Failed, message: ResponseCode.Failed.GetDescription());
+                return res > 0 ? new Response<BaseBoolResponse>(code: 0, data: new BaseBoolResponse() { Success=true }) : new Response<BaseBoolResponse>(code: (int)ResponseCode.Failed, message: ResponseCode.Failed.GetDescription());
             }
             catch (Exception ex)
             {
-                return new Response<bool>(code: (int)ResponseCode.Failed, message: ResponseCode.Failed.GetDescription());
+                return new Response<BaseBoolResponse>(code: (int)ResponseCode.Failed, message: ResponseCode.Failed.GetDescription());
             }
             finally
             {

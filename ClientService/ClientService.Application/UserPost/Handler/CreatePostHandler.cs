@@ -115,8 +115,6 @@ namespace ClientService.Application.UserPost.Handler
                         AuthorName = user.Name,
                         Status = post.Status.ToString().ToUpper(),
                         StartTime = post.StartTime,
-                        FeedbackContent=post.FeedbackContent,
-                        FeedbackPoint=post.FeedbackPoint,
                         StartStation=startStation.Name,
                         EndStation=endStation.Name,
                         CreatedAt=post.CreatedAt,

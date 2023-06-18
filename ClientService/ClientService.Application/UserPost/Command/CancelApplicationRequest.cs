@@ -1,4 +1,5 @@
-﻿using ClientService.Domain.Wrappers;
+﻿using ClientService.Application.Common.Models.Response;
+using ClientService.Domain.Wrappers;
 using FluentValidation;
 using MediatR;
 using System;
@@ -15,7 +16,7 @@ namespace ClientService.Application.UserPost.Command
             RuleFor(x => x.PostId).GreaterThan(0);
         }
     }
-    public class CancelApplicationRequest: IRequest<Response<bool>>
+    public class CancelApplicationRequest: IRequest<Response<BaseBoolResponse>>
     {
         public long PostId { get; set; }
     }
