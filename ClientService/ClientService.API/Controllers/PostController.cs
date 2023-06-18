@@ -17,7 +17,6 @@ namespace ClientService.API.Controllers
     [Route("/api/v1/posts")]
     public class PostController : ApiControllerBase
     {
-
         public PostController(IMediator mediator, ILogger<PostController> logger) : base(mediator, logger)
         {
         }
