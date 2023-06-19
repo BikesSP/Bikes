@@ -1,5 +1,6 @@
 ﻿using ClientService.Application.Common.Enums;
 using ClientService.Application.Common.Extensions;
+using ClientService.Application.Common.Models.Response;
 using ClientService.Application.Services.CurrentUserService;
 using ClientService.Application.User.Command;
 using ClientService.Application.User.Model;
@@ -15,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace ClientService.Application.User.Handler
 {
-    public class UpdateVehicleStatusHandler : IRequestHandler<UpdateVehicleStatusRequest, Response<bool>>
+    public class UpdateVehicleStatusHandler : IRequestHandler<UpdateVehicleStatusRequest, Response<BaseBoolResponse>>
     {
         private readonly ILogger<UpdateVehicleStatusHandler> _logger;
         private readonly IUnitOfWork _unitOfWork;
@@ -29,7 +30,7 @@ namespace ClientService.Application.User.Handler
             _currentUserService = currentUserService;
         }
 
-        public async Task<Response<bool>> Handle(UpdateVehicleStatusRequest request, CancellationToken cancellationToken)
+        public async Task<Response<BaseBoolResponse>> Handle(UpdateVehicleStatusRequest request, CancellationToken cancellationToken)
         {
             try
             {
@@ -37,7 +38,7 @@ namespace ClientService.Application.User.Handler
                 var vehicle = vehicleQuery.FirstOrDefault();
                 if (vehicle == null)
                 {
-                    return new Response<bool>(code: (int)ResponseCode.AccountErrorNotFound, message: ResponseCode.AccountErrorNotFound.GetDescription());
+                    return new Response<BaseBoolResponse>(code: (int)ResponseCode.AccountErrorNotFound, message: ResponseCode.AccountErrorNotFound.GetDescription());
                 }
 
                 vehicle.Status = request.Approved ? Domain.Common.VehicleStatus.Approved : Domain.Common.VehicleStatus.Deny;
@@ -46,11 +47,11 @@ namespace ClientService.Application.User.Handler
 
                 var result = await _unitOfWork.SaveChangesAsync();
 
-                return new Response<bool>(code: 0, data: result > 0);
+                return new Response<BaseBoolResponse>(code: 0, data: new BaseBoolResponse() { Success = result > 0 });
             }
             catch (Exception ex)
             {
-                return new Response<bool>(code: (int)ResponseCode.Failed, message: ResponseCode.Failed.GetDescription());
+                return new Response<BaseBoolResponse>(code: (int)ResponseCode.Failed, message: ResponseCode.Failed.GetDescription());
             }
             finally
             {

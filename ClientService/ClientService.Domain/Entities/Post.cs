@@ -21,8 +21,8 @@ namespace ClientService.Domain.Entities
         [InverseProperty("Post")]
         public Trip? Trip { get; set; }
         public virtual List<Account> Applier { get; set; } 
-        public float FeedbackPoint { get; set; }
-        public string FeedbackContent { get; set; }
+        public float? FeedbackPoint { get; set; }
+        public string? FeedbackContent { get; set; }
         [ForeignKey("StartStationId")]
         public Station StartStation { get; set; }
         [ForeignKey("EndStationId")]

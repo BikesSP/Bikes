@@ -13,7 +13,7 @@ namespace ClientService.Application.User.Model
         public string Name { get; set; }
         public string Phone { get; set; }
         public string Avatar { get; set; }
-        public int AveragePoint { get; set; }
+        public float AveragePoint { get; set; }
         public bool IsUpdated { get; set; }
     }
 }

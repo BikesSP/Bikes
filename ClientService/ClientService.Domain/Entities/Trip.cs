@@ -23,8 +23,8 @@ namespace ClientService.Domain.Entities
         public DateTimeOffset FinishAt { get; set;}
         public DateTimeOffset CancelAt { get; set; }
         public DateTimeOffset PostedStartTime { get; set; }
-        public float FeedbackPoint { get; set; }
-        public string FeedbackContent { get; set; }
+        public float? FeedbackPoint { get; set; }
+        public string? FeedbackContent { get; set; }
         [ForeignKey("StartStationId")]
         public Station StartStation { get; set; }
         [ForeignKey("EndStationId")]
