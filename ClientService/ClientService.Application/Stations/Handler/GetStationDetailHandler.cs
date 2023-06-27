@@ -3,12 +3,14 @@ using ClientService.Application.Common.Extensions;
 using ClientService.Application.Stations.Command;
 using ClientService.Application.Stations.Model;
 using ClientService.Application.UserPost.Model;
+using ClientService.Domain.Common;
 using ClientService.Domain.Wrappers;
 using ClientService.Infrastructure.Repositories;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,34 +31,46 @@ namespace ClientService.Application.Stations.Handler
         }
 
 
-        public async Task<Response<StationDetailResponse?>> Handle(GetStationDetailRequest request, CancellationToken cancellationToken)
+        public async Task<Response<StationDetailResponse>> Handle(GetStationDetailRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                var stationQuery = await _unitOfWork.StationRepository.GetAsync(expression: x => x.Id == request.id);
+                var stationQuery = await _unitOfWork.StationRepository.GetAsync(expression: x => x.Id == request.id, includeFunc: x => x.Include(station => station.PreviousStation).Include(station => station.NextStation), disableTracking:false);
+
 
                 var station = stationQuery.FirstOrDefault();
 
                 if (station == null)
                 {
-                    return new Response<StationDetailResponse?>(code: (int)ResponseCode.StationErrorNotFound, message: ResponseCode.StationErrorNotFound.GetDescription());
+                    return new Response<StationDetailResponse>(code: (int)ResponseCode.StationErrorNotFound, message: ResponseCode.StationErrorNotFound.GetDescription());
                 }
 
-                return new Response<StationDetailResponse?>(code: 0, data: new StationDetailResponse()
+
+                return new Response<StationDetailResponse>(code: 0, data: new StationDetailResponse()
                 {
-                    Id = (int)station.Id,
+                    Id = station.Id,
                     Name = station.Name,
                     Description = station.Description,
                     Address = station.Address,
                     Latitude = station.Latitude,
                     Longitude = station.Longitude,
-                    ObjectStatus = station.ObjectStatus,
+                    Status = ObjectStatus.Active.ToString().ToUpper(),
+                    NextStations = station.PreviousStation.ConvertAll(value => new StationDetailResponse()
+                    {
+                        Id = value.Id,
+                        Name = value.Name,
+                        Description = value.Description,
+                        Address = value.Address,
+                        Latitude = value.Latitude,
+                        Longitude = value.Longitude,
+                        Status = ObjectStatus.Active.ToString().ToUpper(),
+                    })
                 }
               );
             }
             catch (Exception ex)
             {
-                return new Response<StationDetailResponse?>(
+                return new Response<StationDetailResponse>(
                     code: (int)ResponseCode.Failed, message: ResponseCode.Failed.GetDescription());
             }
             finally

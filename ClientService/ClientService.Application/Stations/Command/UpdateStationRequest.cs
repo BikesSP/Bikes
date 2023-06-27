@@ -34,9 +34,9 @@ namespace ClientService.Application.Stations.Command
 
         public string Address { get; set; }
 
-        public float? Longtitude { get; set; }
+        public float? Longitude { get; set; }
         public float? Latitude { get; set; }
 
-        public List<long>? NextStationIds { get; set; }
+        public List<long>? NextStationsIds { get; set; }
     }
 }

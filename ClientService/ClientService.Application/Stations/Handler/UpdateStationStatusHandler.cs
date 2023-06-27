@@ -43,7 +43,7 @@ namespace ClientService.Application.Stations.Handler
                 }
 
                 if (request.Status.Equals((ObjectStatus.Inactive))) {
-                    var checkExistQuery = await _unitOfWork.TripRepository.GetAsync(expression: x => x.StartStationId == request.Id || x.EndStationId == request.Id);
+                    var checkExistQuery = await _unitOfWork.TripRepository.GetAsync(expression: x => x.StartStationId == request.Id || x.EndStationId == request.Id, disableTracking: false);
 
                     var result = checkExistQuery.FirstOrDefault();
 

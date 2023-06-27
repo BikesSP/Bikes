@@ -19,7 +19,7 @@ namespace ClientService.Application.Stations.Command
             RuleFor(model => model.Description).NotEmpty();
             RuleFor(model => model.Address).NotEmpty();
             RuleFor(model => model.Latitude).NotEmpty();
-            RuleFor(model => model.Longtitude).NotEmpty();
+            RuleFor(model => model.Longitude).NotEmpty();
         }
     }
 
@@ -31,10 +31,10 @@ namespace ClientService.Application.Stations.Command
 
         public string Address { get; set; } 
 
-        public float Longtitude { get; set; }
+        public float Longitude { get; set; }
         public float Latitude { get; set; }
 
-        public List<long>? NextStationIds { get; set; }
+        public List<long>? NextStationsIds { get; set; }
 
     }
 }

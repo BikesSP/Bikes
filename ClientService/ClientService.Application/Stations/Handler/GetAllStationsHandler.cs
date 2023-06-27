@@ -7,6 +7,7 @@ using ClientService.Application.Stations.Model;
 using ClientService.Application.UserPost.Command;
 using ClientService.Application.UserPost.Handler;
 using ClientService.Application.UserPost.Model;
+using ClientService.Domain.Common;
 using ClientService.Domain.Wrappers;
 using ClientService.Infrastructure.Repositories;
 using MediatR;
@@ -50,13 +51,13 @@ namespace ClientService.Application.Stations.Handler
                         TotalPage = (int?)((result?.Total + (long)request.PageSize - 1) / (long)request.PageSize) ?? 0,
                         Items = result.Data.ConvertAll(station => new StationDetailResponse()
                         {
-                            Id= (int)station.Id,
+                            Id= station.Id,
                             Name = station.Name,
                             Description = station.Description,
                             Address = station.Address,
                             Latitude = station.Latitude,
                             Longitude = station.Longitude,
-                            ObjectStatus = station.ObjectStatus,
+                            Status = ObjectStatus.Active.ToString().ToUpper(),
                         })
                     }
                     );

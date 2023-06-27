@@ -37,9 +37,10 @@ namespace ClientService.Application.Stations.Handler
         {
             try
             {
-                var nextStations = await _unitOfWork.StationRepository.GetAllAsync(expression: x => request.NextStationIds.Contains(x.Id) && x.ObjectStatus == ObjectStatus.Active, disableTracking:false);
+                var nextStationQuery = await _unitOfWork.StationRepository.GetAllAsync(expression: x => request.NextStationsIds.Contains(x.Id) && x.ObjectStatus == ObjectStatus.Active, disableTracking:false);
+                var nextStations = nextStationQuery.ToList();
 
-                if (request.NextStationIds.Count != 0 && nextStations.Count() == 0)
+                if (request.NextStationsIds.Count != 0 && nextStations.ToList().Count() == 0)
                 {
                     return new Response<StationDetailResponse?>(code: (int)ResponseCode.StationErrorIsInactive, message: ResponseCode.StationErrorIsInactive.GetDescription());
                 }
@@ -51,7 +52,7 @@ namespace ClientService.Application.Stations.Handler
                     Address=request.Address,
                     Description = request.Description,
                     Latitude = request.Latitude,
-                    Longitude = request.Longtitude,
+                    Longitude = request.Longitude,
                     ObjectStatus = ObjectStatus.Active,
                     NextStation=nextStations.ToList()
                 };
@@ -62,13 +63,13 @@ namespace ClientService.Application.Stations.Handler
                 return result > 0 ? 
                     new Response<StationDetailResponse?>(code: 0, data: new StationDetailResponse()
                     {
-                        Id= (int)station.Id,
+                        Id= station.Id,
                         Name=station.Name,
                         Address=station.Address,
                         Description=station.Description,
                         Latitude=station.Latitude,
                         Longitude=station.Longitude,
-                        ObjectStatus= ObjectStatus.Active,
+                        Status= ObjectStatus.Active.ToString().ToUpper(),
                     })
                     : new Response<StationDetailResponse?>(code: (int)ResponseCode.Failed, message: ResponseCode.Failed.GetDescription());
             }

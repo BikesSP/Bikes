@@ -30,26 +30,26 @@ namespace ClientService.API.Controllers
             return Ok(await mediator.Send(request));
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{stationId}")]
         [ProducesResponseType(typeof(StationDetailResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetStationDetail(int id)
+        public async Task<IActionResult> GetStationDetail(int stationId)
         {
             GetStationDetailRequest request = new GetStationDetailRequest()
             {
-                id = id
+                id = stationId
             };
             return Ok(await mediator.Send(request));
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{stationId}")]
         [AllowAnonymous]
         [ProducesResponseType(typeof(StationDetailResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         //[Authorize(Roles = "User")]
-        public async Task<IActionResult> UpdateStation(int id, [FromBody] UpdateStationRequest request)
+        public async Task<IActionResult> UpdateStation(int stationId, [FromBody] UpdateStationRequest request)
         {
-            request.Id = id;
+            request.Id = stationId;
             return Ok(await mediator.Send(request));
         }
 
@@ -62,12 +62,12 @@ namespace ClientService.API.Controllers
         }
 
 
-        [HttpPut("{id}/status")]
+        [HttpPut("{stationId}/status")]
         [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> UpdateStationStatus(int id, [FromBody] UpdateStationStatusRequest request)
+        public async Task<IActionResult> UpdateStationStatus(int stationId, [FromBody] UpdateStationStatusRequest request)
         {
-            request.Id = id;
+            request.Id = stationId;
             return Ok(await mediator.Send(request));
         }
     }

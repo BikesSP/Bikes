@@ -33,7 +33,7 @@ namespace ClientService.Application.Stations.Handler
         {
             try
             {
-                var stationQuery = await _unitOfWork.StationRepository.GetAsync(expression: x => x.Id == request.Id);
+                var stationQuery = await _unitOfWork.StationRepository.GetAsync(expression: x => x.Id == request.Id, disableTracking:true);
 
                 var station = stationQuery.FirstOrDefault();
 
@@ -42,7 +42,7 @@ namespace ClientService.Application.Stations.Handler
                     return new Response<StationDetailResponse>(code: (int)ResponseCode.StationErrorNotFound, message: ResponseCode.StationErrorNotFound.GetDescription());
                 }
 
-                var checkExistQuery = await _unitOfWork.TripRepository.GetAsync(expression: x => x.StartStationId == request.Id || x.EndStationId == request.Id);
+                var checkExistQuery = await _unitOfWork.TripRepository.GetAsync(expression: x => x.StartStationId == request.Id || x.EndStationId == request.Id, disableTracking:true);
 
                 var result = checkExistQuery.FirstOrDefault();
 
@@ -51,15 +51,13 @@ namespace ClientService.Application.Stations.Handler
                     return new Response<StationDetailResponse>(code: (int)ResponseCode.StationErrorIsUsed, message: ResponseCode.StationErrorNotFound.GetDescription());
                 }
 
-                Station updateStation = new Station()
-                {
-                    Name = request.Name,
-                    Address = request.Address,
-                    Description = request.Description,
-                    Latitude = (float)request.Latitude,
-                    Longitude = (float)request.Longtitude,
-                    ObjectStatus= station.ObjectStatus
-                };
+
+                station.Name = request.Name;
+                station.Address = request.Address;
+                station.Description = request.Description;
+                station.Latitude = (float)request.Latitude;
+                station.Longitude = (float)request.Longitude;
+                station.ObjectStatus = station.ObjectStatus;
 
                 await _unitOfWork.StationRepository.UpdateAsync(station);
                 var updateResult = await _unitOfWork.SaveChangesAsync();
@@ -67,13 +65,13 @@ namespace ClientService.Application.Stations.Handler
                 return updateResult > 0 ?
                     new Response<StationDetailResponse>(code: 0, data: new StationDetailResponse()
                     {
-                        Id = (int)updateStation.Id,
-                        Name = updateStation.Name,
-                        Address = updateStation.Address,
-                        Description = updateStation.Description,
-                        Latitude = updateStation.Latitude,
-                        Longitude = updateStation.Longitude,
-                        ObjectStatus = updateStation.ObjectStatus,
+                        Id = request.Id,
+                        Name = station.Name,
+                        Address = station.Address,
+                        Description = station.Description,
+                        Latitude = station.Latitude,
+                        Longitude = station.Longitude,
+                        Status = ObjectStatus.Active.ToString().ToUpper(),
                     })
                     : new Response<StationDetailResponse>(code: (int)ResponseCode.Failed, message: ResponseCode.Failed.GetDescription());
             }
