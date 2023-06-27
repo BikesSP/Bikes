@@ -2,18 +2,12 @@
 using ClientService.Application.Common.Extensions;
 using ClientService.Application.Stations.Command;
 using ClientService.Application.Stations.Model;
-using ClientService.Application.UserPost.Model;
 using ClientService.Domain.Common;
 using ClientService.Domain.Wrappers;
 using ClientService.Infrastructure.Repositories;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ClientService.Application.Stations.Handler
 {

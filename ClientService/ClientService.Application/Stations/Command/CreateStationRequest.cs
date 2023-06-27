@@ -18,8 +18,8 @@ namespace ClientService.Application.Stations.Command
                 .NotEmpty();
             RuleFor(model => model.Description).NotEmpty();
             RuleFor(model => model.Address).NotEmpty();
-            RuleFor(model => model.Latitude).NotEmpty();
-            RuleFor(model => model.Longitude).NotEmpty();
+            RuleFor(model => model.Latitude).NotNull();
+            RuleFor(model => model.Longitude).NotNull();
         }
     }
 
