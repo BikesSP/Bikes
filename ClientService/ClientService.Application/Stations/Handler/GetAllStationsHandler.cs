@@ -57,7 +57,7 @@ namespace ClientService.Application.Stations.Handler
                             Address = station.Address,
                             Latitude = station.Latitude,
                             Longitude = station.Longitude,
-                            Status = ObjectStatus.Active.ToString().ToUpper(),
+                            Status = station.ObjectStatus.ToString().ToUpper(),
                         })
                     }
                     );

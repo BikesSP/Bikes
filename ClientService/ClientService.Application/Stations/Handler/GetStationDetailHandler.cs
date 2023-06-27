@@ -48,7 +48,7 @@ namespace ClientService.Application.Stations.Handler
                     Address = station.Address,
                     Latitude = station.Latitude,
                     Longitude = station.Longitude,
-                    Status = ObjectStatus.Active.ToString().ToUpper(),
+                    Status = station.ObjectStatus.ToString().ToUpper(),
                     NextStations = station.PreviousStation.ConvertAll(value => new StationDetailResponse()
                     {
                         Id = value.Id,
@@ -57,7 +57,7 @@ namespace ClientService.Application.Stations.Handler
                         Address = value.Address,
                         Latitude = value.Latitude,
                         Longitude = value.Longitude,
-                        Status = ObjectStatus.Active.ToString().ToUpper(),
+                        Status = value.ObjectStatus.ToString().ToUpper(),
                     })
                 }
               );

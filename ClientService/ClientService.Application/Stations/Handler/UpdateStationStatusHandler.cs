@@ -53,7 +53,7 @@ namespace ClientService.Application.Stations.Handler
                     }
                 }
 
-                station.ObjectStatus = request.Status;
+                station.ObjectStatus = request.Status == "ACTIVE" ? ObjectStatus.Active : ObjectStatus.Inactive;
 
                 await _unitOfWork.StationRepository.UpdateAsync(station);
                 var isSuccess = await _unitOfWork.SaveChangesAsync();

@@ -22,6 +22,6 @@ namespace ClientService.Application.Stations.Command
     public class UpdateStationStatusRequest : IRequest<Response<Boolean>>
     {
         public int Id { get; set; }
-        public ObjectStatus Status { get; set; }
+        public string Status { get; set; }
     }
 }
