@@ -35,33 +35,37 @@ namespace ClientService.Application.Trips.Handler
             var trips = await _unitOfWork.TripRepository.PaginationAsync(
                 filter: request.GetExpressions(),
                 orderBy: request.GetOrder(),
-                includeFunc: query => query.Include(trip => trip.StartStation).Include(trip => trip.EndStation).Include(trip => trip.Grabber)
+                includeFunc: query => query.Include(trip => trip.StartStation)
+                .Include(trip => trip.EndStation)
+                .Include(trip => trip.Grabber)
+                .Include(trip => trip.Passenger)
+                .Include(trip => trip.Post)
             );
 
-            return new PaginationResponse<PostResponse>(code: 0,
-                        data: new PaginationData<PostResponse>()
+            return new PaginationResponse<TripResponse>(code: 0,
+                        data: new PaginationData<TripResponse>()
                         {
                             Page = request.PageNumber,
                             PageSize = request.PageSize,
                             TotalSize = trips.Total,
                             TotalPage = (int?)((trips?.Total + (long)request.PageSize - 1) / (long)request.PageSize) ?? 0,
-                            Items = trips.Data.ConvertAll(post => new PostResponse()
+                            Items = trips.Data.ConvertAll(trips => new TripResponse()
                             {
-                                Id = post.Id,
-                                Role = post.TripRole.GetDescription().ToUpper(),
-                                Description = post.Description,
-                                StartStationId = post.StartStationId,
-                                EndStationId = post.EndStationId,
-                                AuthorId = post.AuthorId,
-                                AuthorName = post.Author?.Name,
-                                Status = post.Status.ToString().ToUpper(),
-                                StartTime = post.StartTime,
-                                FeedbackContent = post.FeedbackContent,
-                                FeedbackPoint = post.FeedbackPoint,
-                                StartStation = post.StartStation?.Name,
-                                EndStation = post.EndStation?.Name,
-                                CreatedAt = post.CreatedAt,
-                                UpdatedAt = post.UpdatedAt
+                                Id = trips.Id,
+                                StartStationName = trips.StartStation.Name,
+                                EndStationName = trips.EndStation.Name,
+                                StartStationId = trips.StartStation.Id,
+                                EndStationId = trips.EndStation.Id,
+                                GrabberId = trips.Grabber.Id,
+                                GrabberName = trips.Grabber.Name,
+                                PassengerId = trips.Passenger.Id,
+                                PassengerName = trips.Passenger.Name,
+                                StartTime = trips.StartAt,
+                                CancelTime = trips.CancelAt,
+                                FeedbackContent = trips.FeedbackContent,
+                                FeedbackPoint = trips.FeedbackPoint,
+                                Status = trips.TripStatus,
+                                PostedStartTime = trips.Post.StartTime
                             })
                         }
                     );
