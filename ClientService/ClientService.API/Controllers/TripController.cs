@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ClientService.API.Controllers
 {
     [ApiController]
-    [Route("/api/v1/trips")]
+    [Route("/api/cms/v1/trips")]
     public class TripController : ApiControllerBase
     {
 
@@ -17,7 +17,6 @@ namespace ClientService.API.Controllers
         }
 
         [HttpGet]
-        [HttpPost]
         [Authorize]
         public async Task<ActionResult<PaginationResponse<TripResponse>>> GetAllTrips([FromQuery]GetAllTripRequest request)
         {
@@ -25,7 +24,6 @@ namespace ClientService.API.Controllers
         }
 
         [HttpGet("{id}")]
-        [HttpPost]
         [Authorize]
         public async Task<ActionResult<Response<TripDetailResponse>>> GetById([FromRoute] long Id)
         {
