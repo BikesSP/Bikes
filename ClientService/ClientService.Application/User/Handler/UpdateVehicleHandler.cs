@@ -61,7 +61,18 @@ namespace ClientService.Application.User.Handler
                             Image = vehicle.ImageUrl,
                             LicencePlate = vehicle.LicensePlate,
                             Type = vehicle.Type,
-                            Status = vehicle.Status
+                            Status = vehicle.Status.ToString().ToUpper(),
+                            Owner = new UserProfileResponse()
+                            {
+                                Id=vehicle.Id.ToString(),
+                                Email=vehicle.Email,
+                                Name=vehicle.Name,
+                                Phone=vehicle.Phone,
+                                Avatar=vehicle.AvartarUlr,
+                                AveragePoint=vehicle.averagePoint,
+                                Status=vehicle.Status.ToString().ToUpper(),
+                                IsUpdated=vehicle.IsUpdated,
+                            }
                         }
                     ): new Response<VehicleResponse?>(code: (int)ResponseCode.Failed, message: ResponseCode.Failed.GetDescription());
             }
