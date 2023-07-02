@@ -10,28 +10,28 @@ public class ExceptionResponse
 {
     public ExceptionResponse()
     {
-        ErrorCode = (int)ResponseCode.CommonError;
+        Code = (int)ResponseCode.CommonError;
         Error = ResponseCode.CommonError.ToString();
         Message = ResponseCode.CommonError.GetDescription();
     }
 
     public ExceptionResponse(ApiException apiException)
     {
-        ErrorCode = apiException.ErrorCode;
+        Code = apiException.ErrorCode;
         Error = apiException.Error;
         Message = apiException.ErrorMessage;
     }
 
     public ExceptionResponse(Exception exception)
     {
-        ErrorCode = (int)HttpStatusCode.InternalServerError;
+        Code = (int)HttpStatusCode.InternalServerError;
         Error = HttpStatusCode.InternalServerError.ToString();
         Message = exception.Message;
     }
 
     public ExceptionResponse(ValidationException exception)
     {
-        ErrorCode = (int)ResponseCode.ErrorValidation;
+        Code = (int)ResponseCode.ErrorValidation;
         Error = ResponseCode.ErrorValidation.GetDescription();
         Message = exception.Message;
         Details ??= new Dictionary<string, List<string>>();
@@ -43,7 +43,7 @@ public class ExceptionResponse
                 Details.Add(error.PropertyName, new List<string> { error.ErrorMessage });
     }
 
-    public int ErrorCode { get; }
+    public int Code { get; }
 
     public string Error { get; }
 

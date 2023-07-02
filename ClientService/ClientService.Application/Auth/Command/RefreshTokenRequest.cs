@@ -1,4 +1,5 @@
 ﻿using ClientService.Application.Auth.Model;
+using ClientService.Domain.Wrappers;
 using FluentValidation;
 using MediatR;
 using System;
@@ -18,7 +19,7 @@ namespace ClientService.Application.Auth.Command
         }
     }
 
-    public class RefreshTokenRequest : IRequest<TokenResponse>
+    public class RefreshTokenRequest : IRequest<Response<TokenResponse>>
     {
         public string RefreshToken { get; set; } = default!;
     }
