@@ -33,6 +33,8 @@ namespace ClientService.Application.Trips.Handler
         public async Task<PaginationResponse<TripResponse>> Handle(GetAllTripRequest request, CancellationToken cancellationToken)
         {
             var trips = await _unitOfWork.TripRepository.PaginationAsync(
+                page: request.PageNumber,
+                pageSize: request.PageSize,
                 filter: request.GetExpressions(),
                 orderBy: request.GetOrder(),
                 includeFunc: query => query.Include(trip => trip.StartStation)
