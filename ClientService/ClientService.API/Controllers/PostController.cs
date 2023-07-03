@@ -22,7 +22,7 @@ namespace ClientService.API.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
+        [Authorize]
         [ProducesResponseType(typeof(Response<PostResponse?>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> CreatePost([FromBody] CreatePostRequest request)

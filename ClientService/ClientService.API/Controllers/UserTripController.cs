@@ -18,7 +18,7 @@ namespace ClientService.API.Controllers
     [Route("/api/v1/trips")]
     public class UserTripController : ApiControllerBase
     {
-        protected UserTripController(IMediator mediator, ILogger logger) : base(mediator, logger)
+        public UserTripController(IMediator mediator, ILogger<UserTripController> logger) : base(mediator, logger)
         {
         }
 
