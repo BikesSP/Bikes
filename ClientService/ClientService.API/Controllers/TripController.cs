@@ -25,10 +25,10 @@ namespace ClientService.API.Controllers
 
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<ActionResult<Response<TripDetailResponse>>> GetById([FromRoute] long Id)
+        public async Task<ActionResult<Response<TripDetailResponse>>> GetById([FromRoute] long id)
         {
             var request = new GetTripDetailRequest();
-            request.Id = Id;
+            request.Id = id;
             return await mediator.Send(request);
         }
     }
