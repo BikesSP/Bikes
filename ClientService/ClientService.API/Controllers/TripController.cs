@@ -12,7 +12,7 @@ namespace ClientService.API.Controllers
     public class TripController : ApiControllerBase
     {
 
-        protected TripController(IMediator mediator, ILogger logger) : base(mediator, logger)
+        public TripController(IMediator mediator, ILogger<TripController> logger) : base(mediator, logger)
         {
         }
 
