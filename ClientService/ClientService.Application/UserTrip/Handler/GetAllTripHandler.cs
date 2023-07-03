@@ -36,6 +36,8 @@ namespace ClientService.Application.UserTrip.Handler
             Account currentUser = await _currentUserService.GetCurrentAccount();
             request.UserId = currentUser.Id;
             var trips = await _unitOfWork.TripRepository.PaginationAsync(
+                page: request.PageNumber,
+                pageSize: request.PageSize,
                 filter: request.GetExpressions(),
                 orderBy: request.GetOrder(),
                 includeFunc: query => query.Include(trip => trip.StartStation)
