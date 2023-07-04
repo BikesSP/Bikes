@@ -1,4 +1,5 @@
 ﻿using ClientService.Application.Auth.Model;
+using ClientService.Domain.Wrappers;
 using FluentValidation;
 using MediatR;
 using System;
@@ -20,7 +21,7 @@ namespace ClientService.Application.Auth.Command
         }
     }
 
-    public class LoginRequest : IRequest<TokenResponse>
+    public class LoginRequest : IRequest<Response<TokenResponse?>>
     {
         public string Email { get; set; } = default!;
 
