@@ -10,5 +10,6 @@ namespace ClientService.Infrastructure.Persistence
         DbSet<Post> Posts { get; }
         DbSet<Trip> Trips { get; }
         DbSet<ExponentPushToken> ExponentPushTokens { get; }
+        DbSet<Notification> Notifications { get; }
     }
 }

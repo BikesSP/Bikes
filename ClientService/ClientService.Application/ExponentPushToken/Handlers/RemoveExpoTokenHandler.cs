@@ -36,7 +36,7 @@ namespace ClientService.Application.ExponentPushToken.Handlers
 
         public async Task<Response<BaseBoolResponse>> Handle(RemoveExpoTokenRequest request, CancellationToken cancellationToken)
         {
-            var user = _currentUserService.GetCurrentAccount();
+            var user = await _currentUserService.GetCurrentAccount();
 
             if(user == null)
             {
@@ -46,12 +46,12 @@ namespace ClientService.Application.ExponentPushToken.Handlers
             var res = await _unitOfWork.ExponentPushTokenRepostiory.GetAsync(x => x.Token == request.Token && x.AccountId == user.Id);
             var tokenEntity = res.FirstOrDefault();
             await _unitOfWork.ExponentPushTokenRepostiory.DeleteAsync(tokenEntity);
-
+            var result = await _unitOfWork.SaveChangesAsync();
 
             return new Response<BaseBoolResponse>(code: 0, data: new BaseBoolResponse()
                 {
-                    Success= true
-                });
+                    Success= result > 0
+            });
         }
     }
 }

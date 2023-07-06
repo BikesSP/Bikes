@@ -36,22 +36,23 @@ namespace ClientService.Application.ExponentPushToken.Handlers
 
         public async Task<Response<BaseBoolResponse>> Handle(AddExpoTokenRequest request, CancellationToken cancellationToken)
         {
-            var user = _currentUserService.GetCurrentAccount();
+            var user = await _currentUserService.GetCurrentAccount();
 
             if(user == null)
             {
                 return new Response<BaseBoolResponse>(code: (int)ResponseCode.AccountErrorNotFound, message: ResponseCode.AccountErrorNotFound.GetDescription());
             }
 
-            var res = await _unitOfWork.ExponentPushTokenRepostiory.AddAsync(new Domain.Entities.ExponentPushToken()
+            await _unitOfWork.ExponentPushTokenRepostiory.AddAsync(new Domain.Entities.ExponentPushToken()
             {
                 AccountId = user.Id,
                 Token = request.Token,
             });
+            var res = await _unitOfWork.SaveChangesAsync();
 
             return new Response<BaseBoolResponse>(code: 0, data: new BaseBoolResponse()
                 {
-                    Success= res != null
+                    Success= res > 0
                 });
         }
     }

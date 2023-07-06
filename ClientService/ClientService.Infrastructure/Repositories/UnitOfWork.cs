@@ -3,6 +3,7 @@ using ClientService.Domain.Entities;
 using ClientService.Infrastructure.Persistence;
 using ClientService.Infrastructure.Repositories.AccountRepository;
 using ClientService.Infrastructure.Repositories.ExponentPushTokenRepository;
+using ClientService.Infrastructure.Repositories.NotificationRepository;
 using ClientService.Infrastructure.Repositories.PostRepository;
 using ClientService.Infrastructure.Repositories.StationRepository;
 using ClientService.Infrastructure.Repositories.TripRepository;
@@ -22,6 +23,7 @@ public class UnitOfWork : IUnitOfWork
     private ITripRepository _tripRepository;
     private IPostRepository _postRepository;
     private IExponentPushTokenRepostiory _exponentPushTokenRepostiory;
+    private INotificationRepository _notificationRepository;
 
     public IAccountRepository AccountRepository
     {
@@ -45,6 +47,11 @@ public class UnitOfWork : IUnitOfWork
     public IExponentPushTokenRepostiory ExponentPushTokenRepostiory
     {
         get => _exponentPushTokenRepostiory ??= new ExponentPushTokenRepostiory(_dbContext);
+    }
+
+    public INotificationRepository NotificationRepository
+    {
+        get => _notificationRepository ??= new NotificationRepository.NotificationRepository(_dbContext);
     }
 
 

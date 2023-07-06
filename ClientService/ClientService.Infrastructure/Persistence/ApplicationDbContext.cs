@@ -31,5 +31,6 @@ namespace ClientService.Infrastructure.Persistence
         public DbSet<Post> Posts => Set<Post>();
         public DbSet<Trip> Trips => Set<Trip>();
         public DbSet<ExponentPushToken> ExponentPushTokens => Set<ExponentPushToken>();
+        public DbSet<Notification> Notifications => Set<Notification>();
     }
 }

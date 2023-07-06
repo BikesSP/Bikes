@@ -11,6 +11,8 @@ using System.Net;
 
 namespace ClientService.API.Controllers
 {
+    [ApiController]
+    [Route("/api/v1/expo-tokens")]
     public class ExponentPushTokenController : ApiControllerBase
     {
         public ExponentPushTokenController(IMediator mediator, ILogger<ExponentPushTokenController> logger) : base(mediator, logger)

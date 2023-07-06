@@ -11,8 +11,9 @@ namespace ClientService.Domain.Entities
     public class ExponentPushToken: BaseAuditableEntity
     {
         [Key]
+        public long Id { get; set; }
         public string Token { get; set; }
-        public long AccountId { get; set; }
+        public Guid AccountId { get; set; }
         public Account Account { get; set; }
 
     }
