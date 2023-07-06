@@ -16,15 +16,15 @@ namespace ClientService.Application.UserTrip.Model
         public TripStatus Status { get; set; }
         public string Description { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
-        public DateTimeOffset StartAt { get; set; }
-        public DateTimeOffset FinishAt { get; set; }
-        public DateTimeOffset CancelAt { get; set; }
+        public DateTimeOffset? StartAt { get; set; }
+        public DateTimeOffset? FinishAt { get; set; }
+        public DateTimeOffset? CancelAt { get; set; }
         public float? FeedbackPoint { get; set; }
         public string? FeedbackContent { get; set; }
         public StationResponse StartStation { get; set; }
         public long EndStationId { get; set; }
         public StationResponse EndStation { get; set; }
-        public DateTimeOffset PostedStartTime { get; set; }
+        public DateTimeOffset? PostedStartTime { get; set; }
         public AccountResponse Passenger { get; set; }
         public AccountResponse Grabber { get; set; }
         public PostResponse Post { get; set; }

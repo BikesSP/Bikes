@@ -76,8 +76,10 @@ namespace ClientService.Application.UserTrip.Handler
             }
 
             trip.TripStatus = TripStatus.OnGoing;
-            trip.StartAt = DateTimeOffset.Now;
+            trip.StartAt = DateTimeOffset.UtcNow;
 
+            trip.Passenger = null;
+            trip.Grabber = null;
             await _unitOfWork.TripRepository.UpdateAsync(trip);
             await _unitOfWork.SaveChangesAsync();
             return new Response<StatusResponse>()

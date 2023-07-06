@@ -50,12 +50,12 @@ namespace ClientService.Application.UserTrip.Query
 
             if (StartFrom != null)
             {
-                expression = expression.And(trip => trip.StartAt.CompareTo(StartFrom.Value) <= 0);
+                expression = expression.And(trip => StartFrom.Value.ToUniversalTime().CompareTo(trip.StartAt.Value) <= 0);
             }
 
             if (StartTo != null)
             {
-                expression = expression.And(trip => trip.StartAt.CompareTo(StartTo.Value) >= 0);
+                expression = expression.And(trip => StartTo.Value.ToUniversalTime().CompareTo(trip.StartAt.Value) >= 0);
             }
 
             if (Status != null)
