@@ -1,9 +1,12 @@
-﻿using ClientService.Application.Common.Enums;
+﻿using ClientService.Application.Common.Constants;
+using ClientService.Application.Common.Enums;
 using ClientService.Application.Common.Exceptions;
 using ClientService.Application.Common.Models.Response;
 using ClientService.Application.Services.CurrentUserService;
+using ClientService.Application.Services.ExpoService;
 using ClientService.Application.UserTrip.Command;
 using ClientService.Domain.Common;
+using ClientService.Domain.Common.Enums.Notification;
 using ClientService.Domain.Entities;
 using ClientService.Domain.Wrappers;
 using ClientService.Infrastructure.Repositories;
@@ -25,13 +28,15 @@ namespace ClientService.Application.UserTrip.Handler
         private readonly ILogger<FeedbackTripHandler> _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IExpoService _expoService;
 
         public FeedbackTripHandler(
-            ILogger<FeedbackTripHandler> logger, IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
+            ILogger<FeedbackTripHandler> logger, IUnitOfWork unitOfWork, ICurrentUserService currentUserService, IExpoService expoService)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
             _currentUserService = currentUserService;
+            _expoService = expoService;
         }
         public async Task<Response<StatusResponse>> Handle(FeedbackTripRequest request, CancellationToken cancellationToken)
         {
@@ -94,7 +99,20 @@ namespace ClientService.Application.UserTrip.Handler
             trip.Passenger = null;
             trip.Grabber = null;
             await _unitOfWork.TripRepository.UpdateAsync(trip);
-            await _unitOfWork.SaveChangesAsync();
+            var res = await _unitOfWork.SaveChangesAsync();
+
+            if (res > 0)
+            {
+                var notifiedPerson = currentAccount.Id == trip.GrabberId ? trip.Passenger.ExponentPushToken : trip.Grabber.ExponentPushToken;
+                _expoService.sendTo(notifiedPerson.Token, new Services.ExpoService.Notification()
+                {
+                    Title = NotificationConstant.Title.TRIP_FEEDBACK,
+                    Body = String.Format(NotificationConstant.Body.TRIP_FEEDBACK, currentAccount.Id, trip.StartStation.Name, trip.EndStation.Name),
+                    Action = NotificationAction.OpenTrip,
+                    ReferenceId = trip.Id.ToString(),
+                });
+            }
+
             return new Response<StatusResponse>
             {
                 Code = 0,

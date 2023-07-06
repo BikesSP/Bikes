@@ -1,9 +1,12 @@
-﻿using ClientService.Application.Common.Enums;
+﻿using ClientService.Application.Common.Constants;
+using ClientService.Application.Common.Enums;
 using ClientService.Application.Common.Extensions;
 using ClientService.Application.Common.Models.Response;
 using ClientService.Application.Services.CurrentUserService;
+using ClientService.Application.Services.ExpoService;
 using ClientService.Application.UserPost.Command;
 using ClientService.Domain.Common;
+using ClientService.Domain.Common.Enums.Notification;
 using ClientService.Domain.Entities;
 using ClientService.Domain.Wrappers;
 using ClientService.Infrastructure.Repositories;
@@ -18,13 +21,15 @@ namespace ClientService.Application.UserPost.Handler
         private readonly ILogger<ApplyPostHandler> _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IExpoService _expoService;
 
         public ApplyPostHandler(
-            ILogger<ApplyPostHandler> logger, IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
+            ILogger<ApplyPostHandler> logger, IUnitOfWork unitOfWork, ICurrentUserService currentUserService, IExpoService expoService)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
             _currentUserService = currentUserService;
+            _expoService = expoService;
         }
 
         public async Task<Response<BaseBoolResponse>> Handle(ApplyPostRequest request, CancellationToken cancellationToken)
@@ -37,7 +42,7 @@ namespace ClientService.Application.UserPost.Handler
                     return new Response<BaseBoolResponse>(code: (int)ResponseCode.PostErrorUnupdatedAccount, message: ResponseCode.PostErrorUnupdatedAccount.GetDescription());
                 }
 
-                var postQuery = await _unitOfWork.PostRepository.GetAsync(expression: x => x.Id == request.Id, includeFunc: x => x.Include(post => post.Applier), disableTracking: false);
+                var postQuery = await _unitOfWork.PostRepository.GetAsync(expression: x => x.Id == request.Id, includeFunc: x => x.Include(post => post.Applier).Include(post => post.Author).ThenInclude(author => author.ExponentPushToken), disableTracking: false);
                 var post = postQuery.FirstOrDefault();
 
                 if (post?.Status != PostStatus.Created) { 
@@ -75,7 +80,14 @@ namespace ClientService.Application.UserPost.Handler
                 await _unitOfWork.PostRepository.UpdateAsync(post);
                 var res = await _unitOfWork.SaveChangesAsync();
 
-                //TODO: push notification?
+                if(res > 0)
+                    _expoService.sendTo(post.Author.ExponentPushToken.Token, new Services.ExpoService.Notification()
+                    {
+                        Title = NotificationConstant.Title.POST_NEW_APPLICATION,
+                        Body = String.Format(NotificationConstant.Body.POST_NEW_APPLICATION, user.Id),
+                        Action = NotificationAction.OpenPost,
+                        ReferenceId = post.Id.ToString(),
+                    });
 
                 return new Response<BaseBoolResponse>(code: 0, data: new BaseBoolResponse() { Success = res > 0 });
 
