@@ -11,6 +11,7 @@ using ClientService.Domain.Common;
 using ClientService.Domain.Wrappers;
 using ClientService.Infrastructure.Repositories;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -38,8 +39,9 @@ namespace ClientService.Application.Stations.Handler
             {
                 var result = await _unitOfWork.StationRepository.PaginationAsync(
                         page: request.PageNumber,
-                         pageSize: request.PageSize,
-                        filter: request.GetExpressions()
+                        pageSize: request.PageSize,
+                        filter: request.GetExpressions(),
+                        includeFunc: query => query.Include(station => station.NextStation)
                     );
 
                 return new PaginationResponse<StationDetailResponse>(code: 0,
@@ -49,16 +51,25 @@ namespace ClientService.Application.Stations.Handler
                         PageSize = request.PageSize,
                         TotalSize = result.Total,
                         TotalPage = (int?)((result?.Total + (long)request.PageSize - 1) / (long)request.PageSize) ?? 0,
-                        Items = result.Data.ConvertAll(station => new StationDetailResponse()
+                        Items = request.FromStationId == null ? result.Data.ConvertAll(station => new StationDetailResponse()
                         {
-                            Id= station.Id,
+                            Id = station.Id,
                             Name = station.Name,
                             Description = station.Description,
                             Address = station.Address,
                             Latitude = station.Latitude,
                             Longitude = station.Longitude,
                             Status = station.ObjectStatus.ToString().ToUpper(),
-                        })
+                        }) : result.Total != 0 ? result.Data.FirstOrDefault().NextStation.ConvertAll(station => new StationDetailResponse()
+                        {
+                            Id = station.Id,
+                            Name = station.Name,
+                            Description = station.Description,
+                            Address = station.Address,
+                            Latitude = station.Latitude,
+                            Longitude = station.Longitude,
+                            Status = station.ObjectStatus.ToString().ToUpper(),
+                        }) : new List<StationDetailResponse>()
                     }
                     );
             }
