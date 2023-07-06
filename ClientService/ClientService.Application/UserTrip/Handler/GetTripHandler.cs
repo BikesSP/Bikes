@@ -46,10 +46,11 @@ namespace ClientService.Application.UserTrip.Handler
             {
                 return new Response<UserTripDetailResponse>(code: (int)ResponseCode.TripErrorNotFound, message: ResponseCode.TripErrorNotFound.GetDescription());
             }
+            var result = new UserTripDetailResponse(trip);
             return new Response<UserTripDetailResponse>()
             {
                 Code = 0,
-                Data = new UserTripDetailResponse(trip)
+                Data = result
             };
         }
     }

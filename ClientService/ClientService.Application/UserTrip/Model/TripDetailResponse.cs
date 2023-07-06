@@ -21,6 +21,7 @@ namespace ClientService.Application.UserTrip.Model
         public DateTimeOffset? CancelAt { get; set; }
         public float? FeedbackPoint { get; set; }
         public string? FeedbackContent { get; set; }
+        public long StartStationId { get; set; }
         public StationResponse StartStation { get; set; }
         public long EndStationId { get; set; }
         public StationResponse EndStation { get; set; }
@@ -46,12 +47,14 @@ namespace ClientService.Application.UserTrip.Model
             Station sStation = trip.StartStation;
             if (sStation != null)
             {
+                StartStationId = sStation.Id;
                 StartStation = new StationResponse(sStation);
             }
 
             Station eStation = trip.EndStation;
             if (eStation != null)
             {
+                EndStationId = eStation.Id;
                 EndStation = new StationResponse(eStation);
             }
 
