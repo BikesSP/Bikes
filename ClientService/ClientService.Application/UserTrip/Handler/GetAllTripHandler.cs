@@ -45,6 +45,8 @@ namespace ClientService.Application.UserTrip.Handler
                 .Include(trip => trip.Grabber)
                 .Include(trip => trip.Passenger)
                 .Include(trip => trip.Post)
+                .Include(trip => trip.Post.StartStation)
+                .Include(trip => trip.Post.EndStation)
             );
 
             return new PaginationResponse<UserTripResponse>()

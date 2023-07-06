@@ -37,17 +37,20 @@ namespace ClientService.Application.UserTrip.Handler
                 .Include(trip => trip.EndStation)
                 .Include(trip => trip.Grabber)
                 .Include(trip => trip.Passenger)
-                .Include(trip => trip.Post));
+                .Include(trip => trip.Post)
+                .Include(trip => trip.Post.StartStation)
+                .Include(trip => trip.Post.EndStation));
             var trip = tripQuery.FirstOrDefault();
 
             if (trip == null)
             {
                 return new Response<UserTripDetailResponse>(code: (int)ResponseCode.TripErrorNotFound, message: ResponseCode.TripErrorNotFound.GetDescription());
             }
+            var result = new UserTripDetailResponse(trip);
             return new Response<UserTripDetailResponse>()
             {
                 Code = 0,
-                Data = new UserTripDetailResponse(trip)
+                Data = result
             };
         }
     }

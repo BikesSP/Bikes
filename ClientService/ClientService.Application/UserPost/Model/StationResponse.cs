@@ -10,12 +10,17 @@ namespace ClientService.Application.UserPost.Model
 {
     public class StationResponse
     {
-        public long Id;
-        public String Name;
-        public String Address;
-        public String Description;
-        public float Longitude;
-        public float Latitude;
+        public long Id { get; set; }
+        public String Name { get; set; }
+        public String Address { get; set; }
+        public String Description { get; set; }
+        public float Longitude { get; set; }
+        public float Latitude { get; set; }
+
+        public StationResponse()
+        {
+
+        }
 
         public StationResponse(Station station)
         {
