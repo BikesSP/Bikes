@@ -17,10 +17,10 @@ namespace ClientService.Application.Trips.Model
         public String PassengerName { get; set; }
         public Guid GrabberId { get; set; }
         public String GrabberName { get; set; }
-        public DateTimeOffset StartTime { get; set; }
+        public DateTimeOffset? StartTime { get; set; }
 
-        public DateTimeOffset EndTime { get; set; }
-        public DateTimeOffset CancelTime { get; set; }
+        public DateTimeOffset? EndTime { get; set; }
+        public DateTimeOffset? CancelTime { get; set; }
         public float? FeedbackPoint { get; set; }
         public String FeedbackContent { get; set; }
         public TripStatus Status { get; set; }
@@ -28,6 +28,6 @@ namespace ClientService.Application.Trips.Model
         public String StartStationName { get; set; }
         public long EndStationId { get; set; }
         public String EndStationName { get; set; }
-        public DateTimeOffset PostedStartTime { get; set; }
+        public DateTimeOffset? PostedStartTime { get; set; }
     }
 }

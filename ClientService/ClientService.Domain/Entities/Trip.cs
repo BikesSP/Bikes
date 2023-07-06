@@ -19,10 +19,10 @@ namespace ClientService.Domain.Entities
         public Guid? PassengerId { get; set; }
         public Guid? GrabberId { get; set; }
         public TripStatus TripStatus { get; set; }
-        public DateTimeOffset StartAt { get; set; }
-        public DateTimeOffset FinishAt { get; set;}
-        public DateTimeOffset CancelAt { get; set; }
-        public DateTimeOffset PostedStartTime { get; set; }
+        public DateTimeOffset? StartAt { get; set; }
+        public DateTimeOffset? FinishAt { get; set;}
+        public DateTimeOffset? CancelAt { get; set; }
+        public DateTimeOffset? PostedStartTime { get; set; }
         public float? FeedbackPoint { get; set; }
         public string? FeedbackContent { get; set; }
         [ForeignKey("StartStationId")]

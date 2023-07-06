@@ -64,13 +64,15 @@ namespace ClientService.Application.UserTrip.Handler
             }
 
             DateTimeOffset startTime = trip.Post.StartTime;
-            if (startTime.Subtract(DateTimeOffset.Now).TotalSeconds < 30.60)
+            if (startTime.Subtract(DateTimeOffset.UtcNow).TotalSeconds < 30.60)
             {
                 throw new ApiException(ResponseCode.TripErrorCannotCancelTrip);
             }
 
             trip.TripStatus = TripStatus.Canceled;
-            trip.CancelAt = DateTimeOffset.Now;
+            trip.CancelAt = DateTimeOffset.UtcNow;
+            trip.Passenger = null;
+            trip.Grabber = null;
             await _unitOfWork.TripRepository.UpdateAsync(trip);
             await _unitOfWork.SaveChangesAsync();
             return new Response<StatusResponse>

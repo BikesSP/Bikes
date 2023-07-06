@@ -48,8 +48,8 @@ namespace ClientService.Application.UserTrip.Handler
             {
                 throw new ApiException(ResponseCode.TripErrorNotFound);
             }
-
-            if (!trip.Passenger.Id.Equals(_currentUserService.GetCurrentAccount().Id))
+            var currentAccount = await _currentUserService.GetCurrentAccount();
+            if (!trip.Passenger.Id.Equals(currentAccount.Id))
             {
                 throw new ApiException(ResponseCode.TripErrorInvalidAccess);
             }
@@ -91,6 +91,8 @@ namespace ClientService.Application.UserTrip.Handler
 
             trip.FeedbackPoint = point;
             trip.FeedbackContent = content;
+            trip.Passenger = null;
+            trip.Grabber = null;
             await _unitOfWork.TripRepository.UpdateAsync(trip);
             await _unitOfWork.SaveChangesAsync();
             return new Response<StatusResponse>
