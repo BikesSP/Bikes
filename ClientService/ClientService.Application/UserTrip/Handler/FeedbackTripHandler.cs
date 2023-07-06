@@ -44,8 +44,8 @@ namespace ClientService.Application.UserTrip.Handler
                expression: x => x.Id == request.Id,
                includeFunc: (query) => query.Include(trip => trip.StartStation)
                .Include(trip => trip.EndStation)
-               .Include(trip => trip.Grabber)
-               .Include(trip => trip.Passenger)
+               .Include(trip => trip.Grabber).ThenInclude(x => x.ExponentPushToken)
+                .Include(trip => trip.Passenger).ThenInclude(x => x.ExponentPushToken)
                .Include(trip => trip.Post));
             var trip = tripQuery.FirstOrDefault();
 
