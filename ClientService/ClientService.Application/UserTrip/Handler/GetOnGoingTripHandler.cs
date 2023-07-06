@@ -8,6 +8,7 @@ using ClientService.Domain.Wrappers;
 using ClientService.Infrastructure.Repositories;
 using ClientService.Infrastructure.Repositories.TripRepository;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -43,7 +44,15 @@ namespace ClientService.Application.UserTrip.Handler
            
             var trips = await _unitOfWork.TripRepository.GetAsync(
                 expression: x => (x.Passenger.Id == currentUser.Id || x.Grabber.Id == currentUser.Id) && x.TripStatus.Equals(TripStatus.OnGoing),
-                orderBy: GetOrder(SortColumn, SortDir));
+                orderBy: GetOrder(SortColumn, SortDir),
+                includeFunc: query => query.Include(trip => trip.StartStation)
+                .Include(trip => trip.EndStation)
+                .Include(trip => trip.Grabber)
+                .Include(trip => trip.Passenger)
+                .Include(trip => trip.Post)
+                .Include(trip => trip.Post.Author)
+                .Include(trip => trip.Post.StartStation)
+                .Include(trip => trip.Post.EndStation));
             Trip? result = trips.FirstOrDefault();
             if (result == null)
             {
