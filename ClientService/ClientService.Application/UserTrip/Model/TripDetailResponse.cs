@@ -29,7 +29,6 @@ namespace ClientService.Application.UserTrip.Model
         public AccountResponse Passenger { get; set; }
         public AccountResponse Grabber { get; set; }
         public PostResponse Post { get; set; }
-
         public UserTripDetailResponse() { }
         public UserTripDetailResponse(Trip trip)
         {
