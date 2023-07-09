@@ -56,7 +56,7 @@ namespace ClientService.Application.User.Handler
 
                 if (request.Approved)
                 {
-                    _expoService.sendTo(vehicle.ExponentPushToken.Token, new Notification()
+                    _expoService.sendTo(vehicle?.ExponentPushToken?.Token, new Notification()
                     {
                         Title = NotificationConstant.Title.VEHICLE_REGISTRATION_APPROVE,
                         Body = String.Format(NotificationConstant.Body.VEHICLE_REGISTRATION_APPROVE, vehicle.Brand, vehicle.Id),
@@ -65,7 +65,7 @@ namespace ClientService.Application.User.Handler
                     });
                 } else
                 {
-                    _expoService.sendTo(vehicle.ExponentPushToken.Token, new Notification()
+                    _expoService.sendTo(vehicle?.ExponentPushToken?.Token, new Notification()
                     {
                         Title = NotificationConstant.Title.VEHICLE_REGISTRATION_DENIED,
                         Body = String.Format(NotificationConstant.Body.VEHICLE_REGISTRATION_DENIED, vehicle.Brand, vehicle.Id),

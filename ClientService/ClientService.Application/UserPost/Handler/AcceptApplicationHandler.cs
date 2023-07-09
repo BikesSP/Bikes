@@ -97,7 +97,7 @@ namespace ClientService.Application.UserPost.Handler
 
                 //TODO: schedule reminder to remind coming trip?
 
-                _expoService.sendTo(post.Author.ExponentPushToken.Token, new Services.ExpoService.Notification()
+                _expoService.sendTo(post.Author?.ExponentPushToken?.Token, new Services.ExpoService.Notification()
                 {
                     Title = NotificationConstant.Title.POST_NEW_APPLICATION,
                     Body = String.Format(NotificationConstant.Body.POST_NEW_APPLICATION, user.Id),
@@ -111,7 +111,7 @@ namespace ClientService.Application.UserPost.Handler
                 var res = await _unitOfWork.SaveChangesAsync();
 
                 if(res > 0)
-                    _expoService.sendTo(acceptedApplier.ExponentPushToken.Token, new Services.ExpoService.Notification()
+                    _expoService.sendTo(acceptedApplier?.ExponentPushToken?.Token, new Services.ExpoService.Notification()
                     {
                         Title = NotificationConstant.Title.POST_ACCEPT_APPLICATION,
                         Body = String.Format(NotificationConstant.Body.POST_ACCEPT_APPLICATION, post.AuthorId),

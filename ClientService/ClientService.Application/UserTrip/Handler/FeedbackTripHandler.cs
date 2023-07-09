@@ -103,8 +103,8 @@ namespace ClientService.Application.UserTrip.Handler
 
             if (res > 0)
             {
-                var notifiedPerson = currentAccount.Id == trip.GrabberId ? trip.Passenger.ExponentPushToken : trip.Grabber.ExponentPushToken;
-                _expoService.sendTo(notifiedPerson.Token, new Services.ExpoService.Notification()
+                var notifiedPerson = currentAccount.Id == trip.GrabberId ? trip.Passenger : trip.Grabber;
+                _expoService.sendTo(notifiedPerson?.ExponentPushToken?.Token, new Services.ExpoService.Notification()
                 {
                     Title = NotificationConstant.Title.TRIP_FEEDBACK,
                     Body = String.Format(NotificationConstant.Body.TRIP_FEEDBACK, currentAccount.Id, trip.StartStation.Name, trip.EndStation.Name),

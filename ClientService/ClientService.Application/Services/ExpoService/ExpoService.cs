@@ -38,6 +38,7 @@ namespace ClientService.Application.Services.ExpoService
 
         public async void sendTo(string token, Notification notification)
         {
+            if (token == null) return;
             var pushTicketReq = new PushTicketRequest()
             {
                 PushTo = new List<string>() { token },

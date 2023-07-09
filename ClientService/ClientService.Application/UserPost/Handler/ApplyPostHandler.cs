@@ -81,7 +81,7 @@ namespace ClientService.Application.UserPost.Handler
                 var res = await _unitOfWork.SaveChangesAsync();
 
                 if(res > 0)
-                    _expoService.sendTo(post.Author.ExponentPushToken.Token, new Services.ExpoService.Notification()
+                    _expoService.sendTo(post.Author?.ExponentPushToken?.Token, new Services.ExpoService.Notification()
                     {
                         Title = NotificationConstant.Title.POST_NEW_APPLICATION,
                         Body = String.Format(NotificationConstant.Body.POST_NEW_APPLICATION, user.Id),

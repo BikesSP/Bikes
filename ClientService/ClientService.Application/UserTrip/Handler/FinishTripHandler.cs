@@ -75,8 +75,8 @@ namespace ClientService.Application.UserTrip.Handler
 
             if (res > 0)
             {
-                var notifiedPerson = currentUser.Id == trip.GrabberId ? trip.Passenger.ExponentPushToken : trip.Grabber.ExponentPushToken;
-                _expoService.sendTo(notifiedPerson.Token, new Services.ExpoService.Notification()
+                var notifiedPerson = currentUser.Id == trip.GrabberId ? trip.Passenger : trip.Grabber;
+                _expoService.sendTo(notifiedPerson?.ExponentPushToken?.Token, new Services.ExpoService.Notification()
                 {
                     Title = NotificationConstant.Title.TRIP_FINISHED,
                     Body = String.Format(NotificationConstant.Body.TRIP_FINISHED, currentUser.Id, trip.StartStation.Name, trip.EndStation.Name),
