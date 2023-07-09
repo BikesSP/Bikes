@@ -3,6 +3,7 @@ using System;
 using ClientService.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ClientService.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230704132109_UpdatePassword")]
+    partial class UpdatePassword
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -115,41 +118,6 @@ namespace ClientService.Infrastructure.Migrations
                     b.ToTable("Account");
                 });
 
-            modelBuilder.Entity("ClientService.Domain.Entities.ExponentPushToken", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<Guid>("AccountId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AccountId")
-                        .IsUnique();
-
-                    b.ToTable("ExponentPushTokens");
-                });
-
             modelBuilder.Entity("ClientService.Domain.Entities.Post", b =>
                 {
                     b.Property<long>("Id")
@@ -248,7 +216,7 @@ namespace ClientService.Infrastructure.Migrations
                     b.Property<long>("Id")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset?>("CancelAt")
+                    b.Property<DateTimeOffset>("CancelAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTimeOffset>("CreatedAt")
@@ -270,7 +238,7 @@ namespace ClientService.Infrastructure.Migrations
                     b.Property<float?>("FeedbackPoint")
                         .HasColumnType("real");
 
-                    b.Property<DateTimeOffset?>("FinishAt")
+                    b.Property<DateTimeOffset>("FinishAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid?>("GrabberId")
@@ -281,10 +249,10 @@ namespace ClientService.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTimeOffset?>("PostedStartTime")
+                    b.Property<DateTimeOffset>("PostedStartTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTimeOffset?>("StartAt")
+                    b.Property<DateTimeOffset>("StartAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<long>("StartStationId")
@@ -340,17 +308,6 @@ namespace ClientService.Infrastructure.Migrations
                         .HasForeignKey("ApplierId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("ClientService.Domain.Entities.ExponentPushToken", b =>
-                {
-                    b.HasOne("ClientService.Domain.Entities.Account", "Account")
-                        .WithOne("ExponentPushToken")
-                        .HasForeignKey("ClientService.Domain.Entities.ExponentPushToken", "AccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Account");
                 });
 
             modelBuilder.Entity("ClientService.Domain.Entities.Post", b =>
@@ -435,12 +392,6 @@ namespace ClientService.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("PreviousStationId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ClientService.Domain.Entities.Account", b =>
-                {
-                    b.Navigation("ExponentPushToken")
                         .IsRequired();
                 });
 

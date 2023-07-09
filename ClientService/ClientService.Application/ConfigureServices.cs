@@ -5,6 +5,7 @@ using ClientService.Application.Services.CurrentUserService;
 using ClientService.Application.Services.ExpoService;
 using ClientService.Application.Services.GoogleAuthService;
 using ClientService.Application.Services.JwtService;
+using ClientService.Application.Services.Storage;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Configuration;
@@ -39,6 +40,7 @@ public static class ConfigureServices
         services.AddScoped<ICurrentUserService, CurrentUserService>();
 
         services.AddScoped<IExpoService, ExpoService>();
+        services.AddScoped<IStorageService, StorageService>();
 
         return services;
     }
