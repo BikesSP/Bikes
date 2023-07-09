@@ -24,9 +24,9 @@ namespace ClientService.Application.User.Command
     }
     public class UpdateUserProfileRequest : IRequest<Response<UserProfileResponse?>>
     {
-        public string Name { get; set; }
-        public string Phone { get; set; }
-        public string Avatar { get; set; }
-        public string Card { get; set; }
+        public string? Name { get; set; }
+        public string? Phone { get; set; }
+        public string? Avatar { get; set; }
+        public string? Card { get; set; }
     }
 }

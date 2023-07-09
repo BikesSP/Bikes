@@ -61,6 +61,7 @@ namespace ClientService.Application.User.Handler
                                 AveragePoint = currentUser.averagePoint,
                                 Status = currentUser.Status.ToString().ToUpper(),
                                 IsUpdated = currentUser.IsUpdated,
+                                Card = currentUser.Card
                             }
                         }
                     );

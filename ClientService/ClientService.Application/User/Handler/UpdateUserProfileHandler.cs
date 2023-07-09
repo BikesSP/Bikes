@@ -56,7 +56,8 @@ namespace ClientService.Application.User.Handler
                         Id = user.Id.ToString(),
                         IsUpdated = user.IsUpdated,
                         Name = user.Name,
-                        Phone = user.Phone
+                        Phone = user.Phone,
+                        Card = user.Card
                     }
                     );
             }
