@@ -15,5 +15,7 @@ namespace ClientService.Application.User.Model
         public string Avatar { get; set; }
         public float AveragePoint { get; set; }
         public bool IsUpdated { get; set; }
+
+        public string? Status { get; set; }
     }
 }

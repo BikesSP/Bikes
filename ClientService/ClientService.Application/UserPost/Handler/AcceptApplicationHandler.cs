@@ -1,9 +1,12 @@
-﻿using ClientService.Application.Common.Enums;
+﻿using ClientService.Application.Common.Constants;
+using ClientService.Application.Common.Enums;
 using ClientService.Application.Common.Extensions;
 using ClientService.Application.Common.Models.Response;
 using ClientService.Application.Services.CurrentUserService;
+using ClientService.Application.Services.ExpoService;
 using ClientService.Application.UserPost.Command;
 using ClientService.Domain.Common;
+using ClientService.Domain.Common.Enums.Notification;
 using ClientService.Domain.Entities;
 using ClientService.Domain.Wrappers;
 using ClientService.Infrastructure.Repositories;
@@ -23,13 +26,15 @@ namespace ClientService.Application.UserPost.Handler
         private readonly ILogger<AcceptApplicationHandler> _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IExpoService _expoService;
 
         public AcceptApplicationHandler(
-            ILogger<AcceptApplicationHandler> logger, IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
+            ILogger<AcceptApplicationHandler> logger, IUnitOfWork unitOfWork, ICurrentUserService currentUserService, IExpoService expoService)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
             _currentUserService = currentUserService;
+            _expoService = expoService;
         }
 
         public async Task<Response<BaseBoolResponse>> Handle(AcceptApplicationRequest request, CancellationToken cancellationToken)
@@ -50,7 +55,7 @@ namespace ClientService.Application.UserPost.Handler
                     return new Response<BaseBoolResponse>(code: (int)ResponseCode.Failed, message: ResponseCode.Failed.GetDescription());
                 }
 
-                var acceptedApplierQuery = await _unitOfWork.AccountRepository.GetAsync(x => x.Id.ToString() == request.ApplierId);
+                var acceptedApplierQuery = await _unitOfWork.AccountRepository.GetAsync(x => x.Id.ToString() == request.ApplierId, includeFunc: query => query.Include(x => x.ExponentPushToken));
                 var acceptedApplier = acceptedApplierQuery.FirstOrDefault();
                 if (post.Applier == null)
                 {
@@ -92,10 +97,27 @@ namespace ClientService.Application.UserPost.Handler
 
                 //TODO: schedule reminder to remind coming trip?
 
+                _expoService.sendTo(post.Author?.ExponentPushToken?.Token, new Services.ExpoService.Notification()
+                {
+                    Title = NotificationConstant.Title.POST_NEW_APPLICATION,
+                    Body = String.Format(NotificationConstant.Body.POST_NEW_APPLICATION, user.Id),
+                    Action = NotificationAction.OpenPost,
+                    ReferenceId = post.Id.ToString(),
+                });
+
                 post.Status = PostStatus.Completed;
                 await _unitOfWork.PostRepository.UpdateAsync(post);
 
                 var res = await _unitOfWork.SaveChangesAsync();
+
+                if(res > 0)
+                    _expoService.sendTo(acceptedApplier?.ExponentPushToken?.Token, new Services.ExpoService.Notification()
+                    {
+                        Title = NotificationConstant.Title.POST_ACCEPT_APPLICATION,
+                        Body = String.Format(NotificationConstant.Body.POST_ACCEPT_APPLICATION, post.AuthorId),
+                        Action = NotificationAction.OpenTrip,
+                        ReferenceId = post.Id.ToString(),
+                    });
 
                 return res > 0 ? new Response<BaseBoolResponse>(code: 0, data: new BaseBoolResponse() { Success=true }) : new Response<BaseBoolResponse>(code: (int)ResponseCode.Failed, message: ResponseCode.Failed.GetDescription());
             }

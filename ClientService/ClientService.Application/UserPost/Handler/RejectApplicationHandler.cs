@@ -1,9 +1,12 @@
-﻿using ClientService.Application.Common.Enums;
+﻿using ClientService.Application.Common.Constants;
+using ClientService.Application.Common.Enums;
 using ClientService.Application.Common.Extensions;
 using ClientService.Application.Common.Models.Response;
 using ClientService.Application.Services.CurrentUserService;
+using ClientService.Application.Services.ExpoService;
 using ClientService.Application.UserPost.Command;
 using ClientService.Domain.Common;
+using ClientService.Domain.Common.Enums.Notification;
 using ClientService.Domain.Entities;
 using ClientService.Domain.Wrappers;
 using ClientService.Infrastructure.Repositories;
@@ -23,13 +26,15 @@ namespace ClientService.Application.UserPost.Handler
         private readonly ILogger<RejectApplicationHandler> _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IExpoService _expoService;
 
         public RejectApplicationHandler(
-            ILogger<RejectApplicationHandler> logger, IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
+            ILogger<RejectApplicationHandler> logger, IUnitOfWork unitOfWork, ICurrentUserService currentUserService, IExpoService expoService)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
             _currentUserService = currentUserService;
+            _expoService = expoService;
         }
 
         public async Task<Response<BaseBoolResponse>> Handle(RejectApplicationRequest request, CancellationToken cancellationToken)
@@ -65,6 +70,15 @@ namespace ClientService.Application.UserPost.Handler
                 post.Applier = post.Applier.FindAll(x => x.Id.ToString() != request.ApplierId);
                 await _unitOfWork.PostRepository.UpdateAsync(post);
                 var res = await _unitOfWork.SaveChangesAsync();
+
+                if (res > 0)
+                    _expoService.sendTo(rejectedApplier?.ExponentPushToken?.Token, new Services.ExpoService.Notification()
+                    {
+                        Title = NotificationConstant.Title.POST_REJECT_APPLICATION,
+                        Body = String.Format(NotificationConstant.Body.POST_REJECT_APPLICATION, post.AuthorId),
+                        Action = NotificationAction.OpenPost,
+                        ReferenceId = post.Id.ToString(),
+                    });
 
                 //TODO: notify to reject applier
                 return new Response<BaseBoolResponse>(code: 0, data: new BaseBoolResponse() { Success = res > 0 });

@@ -16,6 +16,8 @@ namespace ClientService.Application.User.Model
         public string Image { get; set; }
         public string Description { get; set; }
         public VehicleType Type { get; set; } 
-        public VehicleStatus Status { get; set; }
+        public string Status { get; set; }
+
+        public UserProfileResponse Owner { get; set; }
     }
 }

@@ -1,9 +1,12 @@
-﻿using ClientService.Application.Common.Enums;
+﻿using ClientService.Application.Common.Constants;
+using ClientService.Application.Common.Enums;
 using ClientService.Application.Common.Exceptions;
 using ClientService.Application.Common.Models.Response;
 using ClientService.Application.Services.CurrentUserService;
+using ClientService.Application.Services.ExpoService;
 using ClientService.Application.UserTrip.Command;
 using ClientService.Domain.Common;
+using ClientService.Domain.Common.Enums.Notification;
 using ClientService.Domain.Entities;
 using ClientService.Domain.Wrappers;
 using ClientService.Infrastructure.Repositories;
@@ -23,22 +26,25 @@ namespace ClientService.Application.UserTrip.Handler
         private readonly ILogger<FinishTripHandler> _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IExpoService _expoService;
 
         public FinishTripHandler(
-            ILogger<FinishTripHandler> logger, IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
+            ILogger<FinishTripHandler> logger, IUnitOfWork unitOfWork, ICurrentUserService currentUserService, IExpoService expoService)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
             _currentUserService = currentUserService;
+            _expoService = expoService;
         }
+
         public async Task<Response<StatusResponse>> Handle(FinishTripRequest request, CancellationToken cancellationToken)
         {
             var tripQuery = await _unitOfWork.TripRepository.GetAsync(
                expression: x => x.Id == request.Id,
                includeFunc: (query) => query.Include(trip => trip.StartStation)
                .Include(trip => trip.EndStation)
-               .Include(trip => trip.Grabber)
-               .Include(trip => trip.Passenger)
+               .Include(trip => trip.Grabber).ThenInclude(x => x.ExponentPushToken)
+                .Include(trip => trip.Passenger).ThenInclude(x => x.ExponentPushToken)
                .Include(trip => trip.Post));
             var trip = tripQuery.FirstOrDefault();
             if (trip == null)
@@ -65,7 +71,20 @@ namespace ClientService.Application.UserTrip.Handler
             trip.Passenger = null;
             trip.Grabber = null;
             await _unitOfWork.TripRepository.UpdateAsync(trip);
-            await _unitOfWork.SaveChangesAsync();
+            var res = await _unitOfWork.SaveChangesAsync();
+
+            if (res > 0)
+            {
+                var notifiedPerson = currentUser.Id == trip.GrabberId ? trip.Passenger : trip.Grabber;
+                _expoService.sendTo(notifiedPerson?.ExponentPushToken?.Token, new Services.ExpoService.Notification()
+                {
+                    Title = NotificationConstant.Title.TRIP_FINISHED,
+                    Body = String.Format(NotificationConstant.Body.TRIP_FINISHED, currentUser.Id, trip.StartStation.Name, trip.EndStation.Name),
+                    Action = NotificationAction.OpenTrip,
+                    ReferenceId = trip.Id.ToString(),
+                });
+            }
+
             return new Response<StatusResponse>
             {
                 Code = 0,

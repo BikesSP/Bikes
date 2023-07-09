@@ -3,6 +3,7 @@ using ClientService.Application.Common.Extensions;
 using ClientService.Application.Services.CurrentUserService;
 using ClientService.Application.User.Command;
 using ClientService.Application.User.Model;
+using ClientService.Domain.Entities;
 using ClientService.Domain.Wrappers;
 using ClientService.Infrastructure.Repositories;
 using MediatR;
@@ -49,7 +50,18 @@ namespace ClientService.Application.User.Handler
                             Image = currentUser.ImageUrl,
                             LicencePlate = currentUser.LicensePlate,
                             Type = currentUser.Type,
-                            Status = currentUser.Status
+                            Status = currentUser.Status.ToString().ToUpper(),
+                            Owner = new UserProfileResponse()
+                            {
+                                Id = currentUser.Id.ToString(),
+                                Email = currentUser.Email,
+                                Name = currentUser.Name,
+                                Phone = currentUser.Phone,
+                                Avatar = currentUser.AvartarUlr,
+                                AveragePoint = currentUser.averagePoint,
+                                Status = currentUser.Status.ToString().ToUpper(),
+                                IsUpdated = currentUser.IsUpdated,
+                            }
                         }
                     );
             }

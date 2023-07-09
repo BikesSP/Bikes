@@ -3,6 +3,7 @@ using ClientService.Application.Common.Models.Response;
 using ClientService.Application.Stations.Model;
 using ClientService.Domain.Entities;
 using ClientService.Domain.Wrappers;
+using LinqKit;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -15,9 +16,17 @@ namespace ClientService.Application.Stations.Command
 {
     public class GetAllStationsRequest : PaginationRequest<Station>, IRequest<PaginationResponse<StationDetailResponse>>
     {
+        public long? FromStationId { get; set; }
+
         public override Expression<Func<Station, bool>> GetExpressions()
         {
-            Expression<Func<Station, bool>> expression = _ => true;
+            var expression = PredicateBuilder.New<Station>(true);
+
+            if (FromStationId != null)
+            {
+                expression = expression.And(station => station.Id == FromStationId);
+            }
+
             return expression;
         }
     }

@@ -1,9 +1,12 @@
-﻿using ClientService.Application.Common.Enums;
+﻿using ClientService.Application.Common.Constants;
+using ClientService.Application.Common.Enums;
 using ClientService.Application.Common.Extensions;
 using ClientService.Application.Services.CurrentUserService;
+using ClientService.Application.Services.ExpoService;
 using ClientService.Application.UserPost.Command;
 using ClientService.Application.UserPost.Model;
 using ClientService.Domain.Common;
+using ClientService.Domain.Common.Enums.Notification;
 using ClientService.Domain.Wrappers;
 using ClientService.Infrastructure.Repositories;
 using MediatR;
@@ -22,20 +25,22 @@ namespace ClientService.Application.UserPost.Handler
         private readonly ILogger<CancelPostHandler> _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IExpoService _expoService;
 
         public CancelPostHandler(
-            ILogger<CancelPostHandler> logger, IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
+            ILogger<CancelPostHandler> logger, IUnitOfWork unitOfWork, ICurrentUserService currentUserService, IExpoService expoService)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
             _currentUserService = currentUserService;
+            _expoService = expoService;
         }
 
         public async Task<Response<PostResponse?>> Handle(CancelPostRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                var postQuery = await _unitOfWork.PostRepository.GetAsync(expression: x => x.Id == request.Id, includeFunc: x => x.Include(post => post.Applier).Include(post => post.StartStation).Include(post => post.EndStation).Include(post => post.Author), disableTracking: false);
+                var postQuery = await _unitOfWork.PostRepository.GetAsync(expression: x => x.Id == request.Id, includeFunc: x => x.Include(post => post.Applier).ThenInclude(applier => applier.ExponentPushToken).Include(post => post.StartStation).Include(post => post.EndStation).Include(post => post.Author), disableTracking: false);
                 var post = postQuery.FirstOrDefault();
 
                 if (post?.Status != PostStatus.Created)
@@ -54,7 +59,14 @@ namespace ClientService.Application.UserPost.Handler
 
                 var res = await _unitOfWork.SaveChangesAsync();
 
-                //TODO: notify appliers
+                if(res > 0)
+                    _expoService.sendList(post.Applier.ConvertAll(x => x.ExponentPushToken.Token), new Services.ExpoService.Notification()
+                    {
+                        Title = NotificationConstant.Title.POST_ACCEPT_APPLICATION,
+                        Body = String.Format(NotificationConstant.Body.POST_ACCEPT_APPLICATION, post.AuthorId),
+                        Action = NotificationAction.OpenTrip,
+                        ReferenceId = post.Id.ToString(),
+                    });
 
                 return res > 0 ?
                     new Response<PostResponse?>(code: 0, data: new PostResponse()
