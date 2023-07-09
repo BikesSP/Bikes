@@ -21,7 +21,9 @@ namespace ClientService.API.Controllers
 
         [HttpPost("login")]
         [AllowAnonymous]
-        public async Task<ActionResult<TokenResponse>> Login([FromBody] LoginRequest request)
+        [ProducesResponseType(typeof(Response<TokenResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             return Ok(await mediator.Send(request));
         }

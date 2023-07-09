@@ -3,6 +3,7 @@ using System;
 using ClientService.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ClientService.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230704132109_UpdatePassword")]
+    partial class UpdatePassword
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -213,7 +216,7 @@ namespace ClientService.Infrastructure.Migrations
                     b.Property<long>("Id")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset?>("CancelAt")
+                    b.Property<DateTimeOffset>("CancelAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTimeOffset>("CreatedAt")
@@ -235,7 +238,7 @@ namespace ClientService.Infrastructure.Migrations
                     b.Property<float?>("FeedbackPoint")
                         .HasColumnType("real");
 
-                    b.Property<DateTimeOffset?>("FinishAt")
+                    b.Property<DateTimeOffset>("FinishAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid?>("GrabberId")
@@ -246,10 +249,10 @@ namespace ClientService.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTimeOffset?>("PostedStartTime")
+                    b.Property<DateTimeOffset>("PostedStartTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTimeOffset?>("StartAt")
+                    b.Property<DateTimeOffset>("StartAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<long>("StartStationId")
